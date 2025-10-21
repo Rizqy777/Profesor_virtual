@@ -1,0 +1,137 @@
+[
+    {
+        "nombre_alumno": "Eutimio",
+        "apellidos_alumno": "Arnal",
+        "nombre_profesor": "Enrique",
+        "apellidos_profesor": "Barceló",
+        "asignatura": "Matematicas",
+        "descripcion": "Entre régimen izquierda están animales actividades.",
+        "fecha_conducta": "2022-12-28"
+    },
+    {
+        "nombre_alumno": "Francisco",
+        "apellidos_alumno": "Feijoo",
+        "nombre_profesor": "Esther",
+        "apellidos_profesor": "Azcona",
+        "asignatura": "Matematicas",
+        "descripcion": "Jamás mantener compañía tema asociación encuentra. Que vino niños derecha contenido.",
+        "fecha_conducta": "2020-06-17"
+    },
+    {
+        "nombre_alumno": "Nélida",
+        "apellidos_alumno": "Seguí",
+        "nombre_profesor": "Enrique",
+        "apellidos_profesor": "Barceló",
+        "asignatura": "Sociales",
+        "descripcion": "Aumento estado cuatro quedó capacidad carrera etapa. Oro paso campo ellos río presente.",
+        "fecha_conducta": "2022-01-06"
+    },
+    {
+        "nombre_alumno": "Flor",
+        "apellidos_alumno": "Jiménez",
+        "nombre_profesor": "Custodia",
+        "apellidos_profesor": "Bernad",
+        "asignatura": "Fisica",
+        "descripcion": "Crisis tanto ejemplo habían da. Principio marcha propio natural política.",
+        "fecha_conducta": "2021-10-08"
+    },
+    {
+        "nombre_alumno": "Reyes",
+        "apellidos_alumno": "Montes",
+        "nombre_profesor": "Paulina",
+        "apellidos_profesor": "Saura",
+        "asignatura": "Sociales",
+        "descripcion": "Tres ese región actitud. Educación plan mercado por. Sur minutos edad mis año chile valores.",
+        "fecha_conducta": "2020-12-02"
+    },
+    {
+        "nombre_alumno": "Tatiana",
+        "apellidos_alumno": "Sola",
+        "nombre_profesor": "Custodia",
+        "apellidos_profesor": "Bernad",
+        "asignatura": "Matematicas",
+        "descripcion": "Destino cine participación necesidad. Última anterior electoral dólares.",
+        "fecha_conducta": "2020-05-15"
+    },
+    {
+        "nombre_alumno": "Pascual",
+        "apellidos_alumno": "Lucena",
+        "nombre_profesor": "Héctor",
+        "apellidos_profesor": "Borrego",
+        "asignatura": "Sociales",
+        "descripcion": "Volvió ciudad pp sector varias. Ministro gran civil pone. Militar sólo alta diversas comunidad.",
+        "fecha_conducta": "2021-03-26"
+    },
+    {
+        "nombre_alumno": "Griselda",
+        "apellidos_alumno": "Losada",
+        "nombre_profesor": "Esther",
+        "apellidos_profesor": "Azcona",
+        "asignatura": "Fisica",
+        "descripcion": "Carácter palabras sistemas presencia. Generales puede poner club rosa luis.",
+        "fecha_conducta": "2025-06-13"
+    },
+    {
+        "nombre_alumno": "Nélida",
+        "apellidos_alumno": "Seguí",
+        "nombre_profesor": "Enrique",
+        "apellidos_profesor": "Barceló",
+        "asignatura": "Fisica",
+        "descripcion": "Modo m principio alrededor. Dinero mujer josé posibilidades dinero fuego.",
+        "fecha_conducta": "2021-06-19"
+    },
+    {
+        "nombre_alumno": "Candelas",
+        "apellidos_alumno": "Zaragoza",
+        "nombre_profesor": "Esther",
+        "apellidos_profesor": "Azcona",
+        "asignatura": "Fisica",
+        "descripcion": "Alguien nuestra mil términos. Gente cuanto centro puesto.",
+        "fecha_conducta": "2020-05-29"
+    },
+    {
+        "nombre_alumno": "Eutimio",
+        "apellidos_alumno": "Arnal",
+        "nombre_profesor": "Custodia",
+        "apellidos_profesor": "Bernad",
+        "asignatura": "Sociales",
+        "descripcion": "Luz estas modo primera iba. América sector principales formación unos tarde. Arriba resto cabo.",
+        "fecha_conducta": "2020-11-16"
+    },
+    {
+        "nombre_alumno": "Eutimio",
+        "apellidos_alumno": "Arnal",
+        "nombre_profesor": "Enrique",
+        "apellidos_profesor": "Barceló",
+        "asignatura": "Matematicas",
+        "descripcion": "Nombre joven memoria jóvenes. Fiscal universidad te modo todavía.",
+        "fecha_conducta": "2020-03-09"
+    },
+    {
+        "nombre_alumno": "Ámbar",
+        "apellidos_alumno": "Blasco",
+        "nombre_profesor": "Paulina",
+        "apellidos_profesor": "Saura",
+        "asignatura": "Sociales",
+        "descripcion": "Sociales g radio ahora dan minutos. Energía hora propia durante. Pasa sean partidos.",
+        "fecha_conducta": "2024-08-02"
+    },
+    {
+        "nombre_alumno": "Emperatriz",
+        "apellidos_alumno": "López",
+        "nombre_profesor": "Enrique",
+        "apellidos_profesor": "Barceló",
+        "asignatura": "Fisica",
+        "descripcion": "Política dicho sobre haber. Favor buena mal español ve universidad.",
+        "fecha_conducta": "2025-03-26"
+    },
+    {
+        "nombre_alumno": "Gertrudis",
+        "apellidos_alumno": "Ballester",
+        "nombre_profesor": "Paulina",
+        "apellidos_profesor": "Saura",
+        "asignatura": "Fisica",
+        "descripcion": "Centro marcha le económica. Vida podrá para.",
+        "fecha_conducta": "2020-09-19"
+    }
+]

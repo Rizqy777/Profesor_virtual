@@ -1,0 +1,202 @@
+[
+    {
+        "nombre_alumno": "Seve",
+        "apellidos_alumno": "Seco",
+        "asignatura": "Lengua",
+        "nombre_profesor": "Pepita",
+        "apellidos_profesor": "Vera",
+        "calificacion": 1.67,
+        "fecha_calificacion": "2020-07-05",
+        "unidad": "argentina"
+    },
+    {
+        "nombre_alumno": "Angelina",
+        "apellidos_alumno": "Espada",
+        "asignatura": "Frances",
+        "nombre_profesor": "Nidia",
+        "apellidos_profesor": "Leal",
+        "calificacion": 0.7,
+        "fecha_calificacion": "2024-11-27",
+        "unidad": "vez"
+    },
+    {
+        "nombre_alumno": "Selena",
+        "apellidos_alumno": "Gibert",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Heliodoro",
+        "apellidos_profesor": "Sola",
+        "calificacion": 1.29,
+        "fecha_calificacion": "2025-08-25",
+        "unidad": "vino"
+    },
+    {
+        "nombre_alumno": "María Pilar",
+        "apellidos_alumno": "Roldan",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Heliodoro",
+        "apellidos_profesor": "Sola",
+        "calificacion": 3.7,
+        "fecha_calificacion": "2023-12-04",
+        "unidad": "vez"
+    },
+    {
+        "nombre_alumno": "Iván",
+        "apellidos_alumno": "Alcalde",
+        "asignatura": "Lengua",
+        "nombre_profesor": "María Belén",
+        "apellidos_profesor": "Castillo",
+        "calificacion": 5.52,
+        "fecha_calificacion": "2025-01-16",
+        "unidad": "vino"
+    },
+    {
+        "nombre_alumno": "Porfirio",
+        "apellidos_alumno": "Fernandez",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Nidia",
+        "apellidos_profesor": "Leal",
+        "calificacion": 9.96,
+        "fecha_calificacion": "2021-08-26",
+        "unidad": "vino"
+    },
+    {
+        "nombre_alumno": "Teo",
+        "apellidos_alumno": "Bartolomé",
+        "asignatura": "Frances",
+        "nombre_profesor": "Nidia",
+        "apellidos_profesor": "Leal",
+        "calificacion": 7.86,
+        "fecha_calificacion": "2023-02-14",
+        "unidad": "costa"
+    },
+    {
+        "nombre_alumno": "Faustino",
+        "apellidos_alumno": "Balaguer",
+        "asignatura": "Frances",
+        "nombre_profesor": "María Belén",
+        "apellidos_profesor": "Castillo",
+        "calificacion": 6.49,
+        "fecha_calificacion": "2023-09-10",
+        "unidad": "vez"
+    },
+    {
+        "nombre_alumno": "Benjamín",
+        "apellidos_alumno": "Núñez",
+        "asignatura": "Lengua",
+        "nombre_profesor": "Bernabé",
+        "apellidos_profesor": "Contreras",
+        "calificacion": 4.49,
+        "fecha_calificacion": "2020-07-09",
+        "unidad": "vez"
+    },
+    {
+        "nombre_alumno": "Dominga",
+        "apellidos_alumno": "Crespo",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Heliodoro",
+        "apellidos_profesor": "Sola",
+        "calificacion": 0.34,
+        "fecha_calificacion": "2022-05-29",
+        "unidad": "temas"
+    },
+    {
+        "nombre_alumno": "María Pilar",
+        "apellidos_alumno": "Roldan",
+        "asignatura": "Frances",
+        "nombre_profesor": "Heliodoro",
+        "apellidos_profesor": "Sola",
+        "calificacion": 5.35,
+        "fecha_calificacion": "2022-06-03",
+        "unidad": "mucha"
+    },
+    {
+        "nombre_alumno": "Benjamín",
+        "apellidos_alumno": "Núñez",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Pepita",
+        "apellidos_profesor": "Vera",
+        "calificacion": 0.19,
+        "fecha_calificacion": "2022-05-09",
+        "unidad": "vez"
+    },
+    {
+        "nombre_alumno": "Chelo",
+        "apellidos_alumno": "Riba",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Heliodoro",
+        "apellidos_profesor": "Sola",
+        "calificacion": 1.95,
+        "fecha_calificacion": "2020-05-10",
+        "unidad": "años"
+    },
+    {
+        "nombre_alumno": "Esmeralda",
+        "apellidos_alumno": "Uría",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Nidia",
+        "apellidos_profesor": "Leal",
+        "calificacion": 0.44,
+        "fecha_calificacion": "2020-10-07",
+        "unidad": "madre"
+    },
+    {
+        "nombre_alumno": "Teo",
+        "apellidos_alumno": "Bartolomé",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Nidia",
+        "apellidos_profesor": "Leal",
+        "calificacion": 7.41,
+        "fecha_calificacion": "2021-11-04",
+        "unidad": "fernando"
+    },
+    {
+        "nombre_alumno": "Calixta",
+        "apellidos_alumno": "Olivera",
+        "asignatura": "Lengua",
+        "nombre_profesor": "Heliodoro",
+        "apellidos_profesor": "Sola",
+        "calificacion": 9.42,
+        "fecha_calificacion": "2024-05-02",
+        "unidad": "mundo"
+    },
+    {
+        "nombre_alumno": "Ciríaco",
+        "apellidos_alumno": "Piñol",
+        "asignatura": "Lengua",
+        "nombre_profesor": "Bernabé",
+        "apellidos_profesor": "Contreras",
+        "calificacion": 3.98,
+        "fecha_calificacion": "2025-10-01",
+        "unidad": "costa"
+    },
+    {
+        "nombre_alumno": "Dominga",
+        "apellidos_alumno": "Crespo",
+        "asignatura": "Lengua",
+        "nombre_profesor": "Pepita",
+        "apellidos_profesor": "Vera",
+        "calificacion": 9.9,
+        "fecha_calificacion": "2025-02-07",
+        "unidad": "conseguir"
+    },
+    {
+        "nombre_alumno": "Faustino",
+        "apellidos_alumno": "Balaguer",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Nidia",
+        "apellidos_profesor": "Leal",
+        "calificacion": 5.4,
+        "fecha_calificacion": "2025-04-22",
+        "unidad": "mundo"
+    },
+    {
+        "nombre_alumno": "Rómulo",
+        "apellidos_alumno": "Rincón",
+        "asignatura": "Matematicas",
+        "nombre_profesor": "Nidia",
+        "apellidos_profesor": "Leal",
+        "calificacion": 9.74,
+        "fecha_calificacion": "2024-11-05",
+        "unidad": "temas"
+    }
+]
