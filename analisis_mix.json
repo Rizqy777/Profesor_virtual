@@ -1,0 +1,242 @@
+[
+    {
+        "nombre_alumno": "Camilo",
+        "apellidos_alumno": "Pinedo"
+    },
+    {
+        "nombre_alumno": "Jenaro",
+        "apellidos_alumno": "Roda"
+    },
+    {
+        "nombre_alumno": "Roberto",
+        "apellidos_alumno": "Infante"
+    },
+    {
+        "nombre_alumno": "Yaiza",
+        "apellidos_alumno": "Rivera"
+    },
+    {
+        "nombre_alumno": "Clementina",
+        "apellidos_alumno": "Ros"
+    },
+    {
+        "nombre_alumno": "Valeria",
+        "apellidos_alumno": "Salinas"
+    },
+    {
+        "nombre_alumno": "Quique",
+        "apellidos_alumno": "Pacheco"
+    },
+    {
+        "nombre_alumno": "Teresa",
+        "apellidos_alumno": "Pablo"
+    },
+    {
+        "nombre_alumno": "Alejo",
+        "apellidos_alumno": "Macías"
+    },
+    {
+        "nombre_alumno": "Amador",
+        "apellidos_alumno": "Goñi"
+    },
+    {
+        "nombre_alumno": "Candelas",
+        "apellidos_alumno": "Juárez"
+    },
+    {
+        "nombre_alumno": "Celestino",
+        "apellidos_alumno": "Ávila"
+    },
+    {
+        "nombre_alumno": "Manu",
+        "apellidos_alumno": "Gabaldón"
+    },
+    {
+        "nombre_alumno": "Nico",
+        "apellidos_alumno": "Valderrama"
+    },
+    {
+        "nombre_alumno": "Rodolfo",
+        "apellidos_alumno": "Casanovas"
+    },
+    {
+        "nombre_alumno": "Sosimo",
+        "apellidos_alumno": "Sureda"
+    },
+    {
+        "nombre_alumno": "Martirio",
+        "apellidos_alumno": "Roca"
+    },
+    {
+        "nombre_alumno": "Albert",
+        "apellidos_alumno": "Gálvez"
+    },
+    {
+        "nombre_alumno": "Balduino",
+        "apellidos_alumno": "Valbuena"
+    },
+    {
+        "nombre_alumno": "Toribio",
+        "apellidos_alumno": "Figuerola"
+    },
+    {
+        "nombre_alumno": "Fabiana",
+        "apellidos_alumno": "Serrano"
+    },
+    {
+        "nombre_alumno": "Espiridión",
+        "apellidos_alumno": "Hierro"
+    },
+    {
+        "nombre_alumno": "Azahara",
+        "apellidos_alumno": "Mancebo"
+    },
+    {
+        "nombre_alumno": "Jovita",
+        "apellidos_alumno": "Badía"
+    },
+    {
+        "nombre_alumno": "Leonel",
+        "apellidos_alumno": "Casal"
+    },
+    {
+        "nombre_alumno": "Josep",
+        "apellidos_alumno": "Fajardo"
+    },
+    {
+        "nombre_alumno": "Fulgencio",
+        "apellidos_alumno": "Sainz"
+    },
+    {
+        "nombre_alumno": "Anna",
+        "apellidos_alumno": "Franch"
+    },
+    {
+        "nombre_alumno": "Eliseo",
+        "apellidos_alumno": "Jordán"
+    },
+    {
+        "nombre_alumno": "Luisina",
+        "apellidos_alumno": "Valls"
+    },
+    {
+        "nombre_alumno": "Candela",
+        "apellidos_alumno": "Casals"
+    },
+    {
+        "nombre_alumno": "Aureliano",
+        "apellidos_alumno": "Ariño"
+    },
+    {
+        "nombre_alumno": "Simón",
+        "apellidos_alumno": "Garzón"
+    },
+    {
+        "nombre_alumno": "Álvaro",
+        "apellidos_alumno": "Canet"
+    },
+    {
+        "nombre_alumno": "Paca",
+        "apellidos_alumno": "Peinado"
+    },
+    {
+        "nombre_alumno": "Anastasia",
+        "apellidos_alumno": "Miguel"
+    },
+    {
+        "nombre_alumno": "Telmo",
+        "apellidos_alumno": "Barceló"
+    },
+    {
+        "nombre_alumno": "Esteban",
+        "apellidos_alumno": "Galindo"
+    },
+    {
+        "nombre_alumno": "Jessica",
+        "apellidos_alumno": "Casado"
+    },
+    {
+        "nombre_alumno": "Concepción",
+        "apellidos_alumno": "Nicolás"
+    },
+    {
+        "nombre_alumno": "Teresa",
+        "apellidos_alumno": "Francisco"
+    },
+    {
+        "nombre_alumno": "Luisa",
+        "apellidos_alumno": "Manzanares"
+    },
+    {
+        "nombre_alumno": "León",
+        "apellidos_alumno": "Malo"
+    },
+    {
+        "nombre_alumno": "Concha",
+        "apellidos_alumno": "Pintor"
+    },
+    {
+        "nombre_alumno": "Fermín",
+        "apellidos_alumno": "Saavedra"
+    },
+    {
+        "nombre_alumno": "Pascual",
+        "apellidos_alumno": "Bartolomé"
+    },
+    {
+        "nombre_alumno": "Nazaret",
+        "apellidos_alumno": "Manrique"
+    },
+    {
+        "nombre_alumno": "Wálter",
+        "apellidos_alumno": "Bayón"
+    },
+    {
+        "nombre_alumno": "Nicolás",
+        "apellidos_alumno": "Barriga"
+    },
+    {
+        "nombre_alumno": "Lupita",
+        "apellidos_alumno": "Sanabria"
+    },
+    {
+        "nombre_alumno": "Candelaria",
+        "apellidos_alumno": "Carrasco"
+    },
+    {
+        "nombre_alumno": "Sol",
+        "apellidos_alumno": "Rubio"
+    },
+    {
+        "nombre_alumno": "Violeta",
+        "apellidos_alumno": "Santiago"
+    },
+    {
+        "nombre_alumno": "Nazaret",
+        "apellidos_alumno": "Calderon"
+    },
+    {
+        "nombre_alumno": "Salvador",
+        "apellidos_alumno": "Ibarra"
+    },
+    {
+        "nombre_alumno": "Ismael",
+        "apellidos_alumno": "Casares"
+    },
+    {
+        "nombre_alumno": "Hermenegildo",
+        "apellidos_alumno": "Pozo"
+    },
+    {
+        "nombre_alumno": "Pelayo",
+        "apellidos_alumno": "Frutos"
+    },
+    {
+        "nombre_alumno": "Emigdio",
+        "apellidos_alumno": "Galán"
+    },
+    {
+        "nombre_alumno": "Merche",
+        "apellidos_alumno": "Badía"
+    }
+]
