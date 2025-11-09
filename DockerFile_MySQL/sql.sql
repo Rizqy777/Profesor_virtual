@@ -132,3 +132,10 @@ CREATE Table progreso(
 );
 
 
+CREATE TABLE log(
+    id_log INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    tipo_usuario ENUM('alumno','profesor') NOT NULL,
+    duracion_sesion INT NOT NULL,
+    fecha_conexion DATETIME NOT NULL
+);

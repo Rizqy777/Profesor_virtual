@@ -2,5 +2,5 @@ FROM mysql:latest
 
 ENV MYSQL_ROOT_PASSWORD=1234
 ENV MYSQL_DATABASE=profesor_virtual_mysql
-
+VOLUME /var/lib/mysql
 COPY sql.sql /docker-entrypoint-initdb.d/

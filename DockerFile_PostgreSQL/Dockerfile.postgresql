@@ -3,5 +3,6 @@ FROM postgres:latest
 ENV POSTGRES_USER=root
 ENV POSTGRES_PASSWORD=1234
 ENV POSTGRES_DB=profesor_virtual_postgres
+VOLUME /var/lib/postgresql/data
 
 COPY sql.sql /docker-entrypoint-initdb.d/
