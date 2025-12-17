@@ -17,7 +17,7 @@ baseDatos = client["TV_StreamDB"]
 coleccion = baseDatos["series"]
 
 ## Insertar series de TV con todos los campos
-
+""" 
 for i in range(50):
     generos_reales = [
         "Drama",
@@ -269,5 +269,39 @@ pipeline = [
 ]
 
 resultados = list(baseDatos["series"].aggregate(pipeline))
+for doc in resultados:
+    print(doc)
+
+ """
+## 7. Gasto financiero
+
+pipeline = [
+    {
+        "$lookup": {
+            "from": "detalles_produccion",
+            "localField": "titulo",
+            "foreignField": "titulo",
+            "as": "detalle"
+        }
+    },
+    { "$unwind": "$detalle" },
+
+    {
+        "$project": {
+            "_id": 0,
+            "titulo": 1,
+            "coste_total": {
+                "$multiply": [
+                    "$detalle.presupuesto_por_episodio",
+                    { "$multiply": ["$temporadas", 8] }
+                ]
+            }
+        }
+    }
+    
+]
+
+resultados = list(baseDatos["series"].aggregate(pipeline))
+
 for doc in resultados:
     print(doc)
