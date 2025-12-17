@@ -1,0 +1,118 @@
+[
+    {
+        "_id": "6942e0685185ddfce4d648ab",
+        "titulo": "La Casa de Papel",
+        "plataforma": "Clark-Anderson",
+        "temporadas": 9,
+        "genero": [
+            "Fantasía",
+            "Fantasía"
+        ],
+        "puntuacion": 1.92,
+        "finalizada": true,
+        "año_estreno": 2013
+    },
+    {
+        "_id": "6942e0695185ddfce4d648ac",
+        "titulo": "Narcos",
+        "plataforma": "Adams-Cain",
+        "temporadas": 4,
+        "genero": [
+            "Crimen",
+            "Musical"
+        ],
+        "puntuacion": 6.96,
+        "finalizada": false,
+        "año_estreno": 2013
+    },
+    {
+        "_id": "6942e0695185ddfce4d648b2",
+        "titulo": "The Boys",
+        "plataforma": "Sherman, Wheeler and Moody",
+        "temporadas": 10,
+        "genero": [
+            "Documental",
+            "Documental"
+        ],
+        "puntuacion": 4.22,
+        "finalizada": false,
+        "año_estreno": 2014
+    },
+    {
+        "_id": "6942e0695185ddfce4d648b5",
+        "titulo": "Breaking Bad",
+        "plataforma": "Hubbard, Ferguson and Bowers",
+        "temporadas": 6,
+        "genero": [
+            "Animación",
+            "Western"
+        ],
+        "puntuacion": 8.62,
+        "finalizada": false,
+        "año_estreno": 2014
+    },
+    {
+        "_id": "6942e0695185ddfce4d648b9",
+        "titulo": "Narcos",
+        "plataforma": "Evans, Nielsen and Allen",
+        "temporadas": 5,
+        "genero": [
+            "Misterio",
+            "Musical"
+        ],
+        "puntuacion": 6.0,
+        "finalizada": true,
+        "año_estreno": 2020
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c7",
+        "titulo": "Game of Thrones",
+        "plataforma": "Caldwell LLC",
+        "temporadas": 7,
+        "genero": [
+            "Terror",
+            "Musical"
+        ],
+        "puntuacion": 6.54,
+        "finalizada": false,
+        "año_estreno": 2012
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648cc",
+        "titulo": "Breaking Bad",
+        "plataforma": "Jones Inc",
+        "temporadas": 7,
+        "genero": [
+            "Aventura",
+            "Romance"
+        ],
+        "puntuacion": 8.6,
+        "finalizada": true,
+        "año_estreno": 2015
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648ce",
+        "titulo": "Friends",
+        "plataforma": "Johnston, Douglas and Turner",
+        "temporadas": 5,
+        "genero": [
+            "Histórico",
+            "Musical"
+        ],
+        "puntuacion": 1.21,
+        "finalizada": false,
+        "año_estreno": 2020
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648de",
+        "titulo": "Lost",
+        "plataforma": "Palmer-Lopez",
+        "temporadas": 7,
+        "genero": [
+            "Animación",
+            "Musical"
+        ],
+        "finalizada": false,
+        "año_estreno": 2010
+    }
+]

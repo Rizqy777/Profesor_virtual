@@ -1,0 +1,15 @@
+[
+    {
+        "_id": "6942e0685185ddfce4d648a9",
+        "titulo": "House of Cards",
+        "plataforma": "Hardin-Curtis",
+        "temporadas": 4,
+        "genero": [
+            "Comedia",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 4.16,
+        "finalizada": false,
+        "año_estreno": 2021
+    }
+]

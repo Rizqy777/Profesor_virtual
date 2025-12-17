@@ -1,0 +1,41 @@
+[
+    {
+        "_id": "6942e0695185ddfce4d648af",
+        "titulo": "The Mandalorian",
+        "plataforma": "Poole Group",
+        "temporadas": 5,
+        "genero": [
+            "Ciencia Ficción",
+            "Documental"
+        ],
+        "puntuacion": 7.6,
+        "finalizada": false,
+        "año_estreno": 2000
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c8",
+        "titulo": "Lost",
+        "plataforma": "Andersen, Glover and Cruz",
+        "temporadas": 8,
+        "genero": [
+            "Thriller",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 8.97,
+        "finalizada": false,
+        "año_estreno": 2005
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648d3",
+        "titulo": "Lost",
+        "plataforma": "Mcknight, Carter and Chen",
+        "temporadas": 8,
+        "genero": [
+            "Ciencia Ficción",
+            "Misterio"
+        ],
+        "puntuacion": 9.83,
+        "finalizada": true,
+        "año_estreno": 1970
+    }
+]

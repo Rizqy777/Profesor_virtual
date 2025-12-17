@@ -1,0 +1,93 @@
+[
+    {
+        "_id": "6942e0695185ddfce4d648b5",
+        "titulo": "Breaking Bad",
+        "plataforma": "Hubbard, Ferguson and Bowers",
+        "temporadas": 6,
+        "genero": [
+            "Animación",
+            "Western"
+        ],
+        "puntuacion": 8.62,
+        "finalizada": false,
+        "año_estreno": 2014
+    },
+    {
+        "_id": "6942e0695185ddfce4d648b8",
+        "titulo": "Friends",
+        "plataforma": "Williams and Sons",
+        "temporadas": 8,
+        "genero": [
+            "Crimen",
+            "Crimen"
+        ],
+        "puntuacion": 8.3,
+        "finalizada": true,
+        "año_estreno": 2021
+    },
+    {
+        "_id": "6942e0695185ddfce4d648bd",
+        "titulo": "The Crown",
+        "plataforma": "Smith Inc",
+        "temporadas": 10,
+        "genero": [
+            "Acción",
+            "Terror"
+        ],
+        "puntuacion": 9.52,
+        "finalizada": true,
+        "año_estreno": 1973
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c0",
+        "titulo": "The Office",
+        "plataforma": "Moon, Lucas and Camacho",
+        "temporadas": 7,
+        "genero": [
+            "Aventura",
+            "Documental"
+        ],
+        "puntuacion": 8.26,
+        "finalizada": false,
+        "año_estreno": 1994
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c8",
+        "titulo": "Lost",
+        "plataforma": "Andersen, Glover and Cruz",
+        "temporadas": 8,
+        "genero": [
+            "Thriller",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 8.97,
+        "finalizada": false,
+        "año_estreno": 2005
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648cc",
+        "titulo": "Breaking Bad",
+        "plataforma": "Jones Inc",
+        "temporadas": 7,
+        "genero": [
+            "Aventura",
+            "Romance"
+        ],
+        "puntuacion": 8.6,
+        "finalizada": true,
+        "año_estreno": 2015
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648d3",
+        "titulo": "Lost",
+        "plataforma": "Mcknight, Carter and Chen",
+        "temporadas": 8,
+        "genero": [
+            "Ciencia Ficción",
+            "Misterio"
+        ],
+        "puntuacion": 9.83,
+        "finalizada": true,
+        "año_estreno": 1970
+    }
+]

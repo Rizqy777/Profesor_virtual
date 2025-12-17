@@ -1,10 +1,11 @@
+import random
 from pymongo import MongoClient
 import os
 from faker import Faker
 import json
 
-user = os.getenv("USER_BD")
-password = os.getenv("PASS_BD")
+user = os.getenv("usuario")
+password = os.getenv("contrasena")
 print(user)
 print(password)
 client = MongoClient(f"mongodb+srv://{user}:{password}@cluster0.f9nrpbf.mongodb.net/")
@@ -15,7 +16,7 @@ baseDatos = client["TV_StreamDB"]
 
 coleccion = baseDatos["series"]
 
-""" ## Insertar series de TV con todos los campos
+## Insertar series de TV con todos los campos
 
 for i in range(50):
     generos_reales = [
@@ -36,8 +37,26 @@ for i in range(50):
         "Histórico",
         "Western",
     ]
+
+    titulos_reales = [
+        "Breaking Bad",
+        "Stranger Things",
+        "Game of Thrones",
+        "The Crown",
+        "Friends",
+        "The Office",
+        "La Casa de Papel",
+        "The Mandalorian",
+        "Dark",
+        "The Witcher",
+        "Narcos",
+        "Black Mirror",
+        "The Boys",
+        "Lost",
+        "House of Cards",
+    ]
     serie = {
-        "titulo": fake.sentence(nb_words=3),
+        "titulo": random.choice(titulos_reales),
         "plataforma": fake.company(),
         "temporadas": fake.random_int(min=1, max=10),
         "genero": fake.random_choices(elements=generos_reales, length=2),
@@ -47,7 +66,6 @@ for i in range(50):
     }
     insercion = coleccion.insert_one(serie)
     print(f"Serie {i} insertada con ID: {insercion.inserted_id}")
-
 
 
 ## Insertar series de TV sin algunos campos
@@ -70,8 +88,25 @@ for i in range(10):
         "Histórico",
         "Western",
     ]
+    titulos_reales = [
+        "Breaking Bad",
+        "Stranger Things",
+        "Game of Thrones",
+        "The Crown",
+        "Friends",
+        "The Office",
+        "La Casa de Papel",
+        "The Mandalorian",
+        "Dark",
+        "The Witcher",
+        "Narcos",
+        "Black Mirror",
+        "The Boys",
+        "Lost",
+        "House of Cards",
+    ]
     serie = {
-        "titulo": fake.sentence(nb_words=3),
+        "titulo": random.choice(titulos_reales),
         "plataforma": fake.company(),
         "temporadas": fake.random_int(min=1, max=10),
         "genero": fake.random_choices(elements=generos_reales, length=2),
@@ -82,10 +117,10 @@ for i in range(10):
     print(
         f"Serie sin algunos campos numero {i} insertada con ID: {insercion.inserted_id}"
     )
- """
+
 ## Consultas
 
-## Maratones Largas: Series que tengan más de 5 temporadas y una puntuación superior a 8.0.
+## Maratones Largas: Series qmiqueryue tengan más de 5 temporadas y una puntuación superior a 8.0.
 miquery = {"temporadas": {"$gt": 5}, "puntuacion": {"$gt": 8.0}}
 maratones = list(coleccion.find(miquery))
 
@@ -162,3 +197,77 @@ for doc in inventadas2:
 
 with open("inventadas2.json", "w", encoding="utf-8") as f:
     json.dump(lista_inventadas2, f, ensure_ascii=False, indent=4)
+
+
+## Obtener media de puntuación de todas las series.
+
+puntuaciones = coleccion.find({}, {"puntuacion": 1, "_id": 0})
+
+sumatorio = 0
+contador = 0
+
+for puntuacion in puntuaciones:
+    if puntuacion.get("puntuacion") is not None:
+        sumatorio += puntuacion["puntuacion"]
+        contador += 1
+
+media = sumatorio / contador
+
+print(f"La puntuación media de todas las series es: {media:.2f}")
+
+## Unificar coleccion
+
+detalles_produccion = baseDatos["detalles_produccion"]
+
+paises_reales = [
+    "United States",
+    "Spain",
+    "United Kingdom",
+    "Germany",
+    "France",
+    "Japan",
+    "South Korea",
+    "Mexico",
+    "Brazil",
+    "Canada",
+    "Sweden",
+    "Netherlands",
+    "Italy",
+    "Australia",
+    "Poland",
+]
+
+for i in range(50):
+
+    detalle = {
+        "titulo": random.choice(titulos_reales),
+        "pais_origen": random.choice(paises_reales),
+        "reparto_principal": [fake.name() for _ in range(3)],
+        "presupuesto_por_episodio": fake.random_int(min=1000000, max=5000000),
+    }
+    insercion = detalles_produccion.insert_one(detalle)
+    print(f"Detalle {i} insertado con ID: {insercion.inserted_id}")
+
+
+pipeline = [
+    {
+        "$lookup": {
+            "from": "detalles_produccion",
+            "localField": "titulo",
+            "foreignField": "titulo",
+            "as": "detalle",
+        }
+    },
+    {"$unwind": "$detalle"},
+    {
+        "$match": {
+            "finalizada": True,
+            "puntuacion": {"$gt": 8},
+            "detalle.pais_origen": "United States",
+        }
+    },
+]
+
+resultados = list(baseDatos["series"].aggregate(pipeline))
+for doc in resultados:
+    print(doc)

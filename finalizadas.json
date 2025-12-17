@@ -1,0 +1,347 @@
+[
+    {
+        "_id": "6942e0685185ddfce4d648aa",
+        "titulo": "La Casa de Papel",
+        "plataforma": "Glass PLC",
+        "temporadas": 3,
+        "genero": [
+            "Musical",
+            "Fantasía"
+        ],
+        "puntuacion": 6.24,
+        "finalizada": true,
+        "año_estreno": 1993
+    },
+    {
+        "_id": "6942e0685185ddfce4d648ab",
+        "titulo": "La Casa de Papel",
+        "plataforma": "Clark-Anderson",
+        "temporadas": 9,
+        "genero": [
+            "Fantasía",
+            "Fantasía"
+        ],
+        "puntuacion": 1.92,
+        "finalizada": true,
+        "año_estreno": 2013
+    },
+    {
+        "_id": "6942e0695185ddfce4d648b8",
+        "titulo": "Friends",
+        "plataforma": "Williams and Sons",
+        "temporadas": 8,
+        "genero": [
+            "Crimen",
+            "Crimen"
+        ],
+        "puntuacion": 8.3,
+        "finalizada": true,
+        "año_estreno": 2021
+    },
+    {
+        "_id": "6942e0695185ddfce4d648b9",
+        "titulo": "Narcos",
+        "plataforma": "Evans, Nielsen and Allen",
+        "temporadas": 5,
+        "genero": [
+            "Misterio",
+            "Musical"
+        ],
+        "puntuacion": 6.0,
+        "finalizada": true,
+        "año_estreno": 2020
+    },
+    {
+        "_id": "6942e0695185ddfce4d648ba",
+        "titulo": "The Mandalorian",
+        "plataforma": "Hill-Brooks",
+        "temporadas": 7,
+        "genero": [
+            "Musical",
+            "Crimen"
+        ],
+        "puntuacion": 6.51,
+        "finalizada": true,
+        "año_estreno": 1986
+    },
+    {
+        "_id": "6942e0695185ddfce4d648bb",
+        "titulo": "Breaking Bad",
+        "plataforma": "Gibbs Inc",
+        "temporadas": 10,
+        "genero": [
+            "Terror",
+            "Comedia"
+        ],
+        "puntuacion": 7.67,
+        "finalizada": true,
+        "año_estreno": 1985
+    },
+    {
+        "_id": "6942e0695185ddfce4d648bc",
+        "titulo": "Stranger Things",
+        "plataforma": "Guzman-Clarke",
+        "temporadas": 10,
+        "genero": [
+            "Drama",
+            "Terror"
+        ],
+        "puntuacion": 3.98,
+        "finalizada": true,
+        "año_estreno": 2001
+    },
+    {
+        "_id": "6942e0695185ddfce4d648bd",
+        "titulo": "The Crown",
+        "plataforma": "Smith Inc",
+        "temporadas": 10,
+        "genero": [
+            "Acción",
+            "Terror"
+        ],
+        "puntuacion": 9.52,
+        "finalizada": true,
+        "año_estreno": 1973
+    },
+    {
+        "_id": "6942e0695185ddfce4d648be",
+        "titulo": "Black Mirror",
+        "plataforma": "Miles, Cox and Watson",
+        "temporadas": 10,
+        "genero": [
+            "Documental",
+            "Crimen"
+        ],
+        "puntuacion": 3.8,
+        "finalizada": true,
+        "año_estreno": 1988
+    },
+    {
+        "_id": "6942e0695185ddfce4d648bf",
+        "titulo": "Friends",
+        "plataforma": "Ward-Jordan",
+        "temporadas": 7,
+        "genero": [
+            "Musical",
+            "Terror"
+        ],
+        "puntuacion": 2.56,
+        "finalizada": true,
+        "año_estreno": 1991
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c3",
+        "titulo": "Friends",
+        "plataforma": "Pittman Group",
+        "temporadas": 4,
+        "genero": [
+            "Documental",
+            "Crimen"
+        ],
+        "puntuacion": 8.77,
+        "finalizada": true,
+        "año_estreno": 2003
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c5",
+        "titulo": "The Crown",
+        "plataforma": "Harvey, Hughes and Burke",
+        "temporadas": 5,
+        "genero": [
+            "Romance",
+            "Documental"
+        ],
+        "puntuacion": 6.78,
+        "finalizada": true,
+        "año_estreno": 1979
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c6",
+        "titulo": "The Boys",
+        "plataforma": "Bowers PLC",
+        "temporadas": 4,
+        "genero": [
+            "Ciencia Ficción",
+            "Acción"
+        ],
+        "puntuacion": 1.95,
+        "finalizada": true,
+        "año_estreno": 1990
+    },
+    {
+        "_id": "6942e0695185ddfce4d648c9",
+        "titulo": "Dark",
+        "plataforma": "Khan Group",
+        "temporadas": 1,
+        "genero": [
+            "Terror",
+            "Aventura"
+        ],
+        "puntuacion": 3.48,
+        "finalizada": true,
+        "año_estreno": 2015
+    },
+    {
+        "_id": "6942e0695185ddfce4d648cb",
+        "titulo": "Narcos",
+        "plataforma": "Padilla, Powell and Curtis",
+        "temporadas": 3,
+        "genero": [
+            "Histórico",
+            "Documental"
+        ],
+        "puntuacion": 6.44,
+        "finalizada": true,
+        "año_estreno": 2005
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648cc",
+        "titulo": "Breaking Bad",
+        "plataforma": "Jones Inc",
+        "temporadas": 7,
+        "genero": [
+            "Aventura",
+            "Romance"
+        ],
+        "puntuacion": 8.6,
+        "finalizada": true,
+        "año_estreno": 2015
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648cf",
+        "titulo": "The Office",
+        "plataforma": "Adams Ltd",
+        "temporadas": 1,
+        "genero": [
+            "Histórico",
+            "Misterio"
+        ],
+        "puntuacion": 9.24,
+        "finalizada": true,
+        "año_estreno": 2021
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648d0",
+        "titulo": "Dark",
+        "plataforma": "Patterson-Martinez",
+        "temporadas": 6,
+        "genero": [
+            "Aventura",
+            "Romance"
+        ],
+        "puntuacion": 3.14,
+        "finalizada": true,
+        "año_estreno": 2001
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648d1",
+        "titulo": "Game of Thrones",
+        "plataforma": "Garcia Group",
+        "temporadas": 4,
+        "genero": [
+            "Acción",
+            "Drama"
+        ],
+        "puntuacion": 5.73,
+        "finalizada": true,
+        "año_estreno": 2001
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648d3",
+        "titulo": "Lost",
+        "plataforma": "Mcknight, Carter and Chen",
+        "temporadas": 8,
+        "genero": [
+            "Ciencia Ficción",
+            "Misterio"
+        ],
+        "puntuacion": 9.83,
+        "finalizada": true,
+        "año_estreno": 1970
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648d8",
+        "titulo": "The Boys",
+        "plataforma": "Johnson-Walters",
+        "temporadas": 3,
+        "genero": [
+            "Acción",
+            "Western"
+        ],
+        "puntuacion": 1.33,
+        "finalizada": true,
+        "año_estreno": 2005
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648db",
+        "titulo": "House of Cards",
+        "plataforma": "Wall, Taylor and Fuentes",
+        "temporadas": 5,
+        "genero": [
+            "Aventura",
+            "Thriller"
+        ],
+        "finalizada": true,
+        "año_estreno": 1995
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648dc",
+        "titulo": "Narcos",
+        "plataforma": "Nicholson and Sons",
+        "temporadas": 7,
+        "genero": [
+            "Animación",
+            "Ciencia Ficción"
+        ],
+        "finalizada": true,
+        "año_estreno": 2021
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648df",
+        "titulo": "The Boys",
+        "plataforma": "Stewart, Larsen and Kennedy",
+        "temporadas": 2,
+        "genero": [
+            "Misterio",
+            "Documental"
+        ],
+        "finalizada": true,
+        "año_estreno": 1989
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648e0",
+        "titulo": "Narcos",
+        "plataforma": "Clark Ltd",
+        "temporadas": 4,
+        "genero": [
+            "Drama",
+            "Aventura"
+        ],
+        "finalizada": true,
+        "año_estreno": 2023
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648e1",
+        "titulo": "Dark",
+        "plataforma": "Briggs-Collins",
+        "temporadas": 9,
+        "genero": [
+            "Comedia",
+            "Animación"
+        ],
+        "finalizada": true,
+        "año_estreno": 2005
+    },
+    {
+        "_id": "6942e06a5185ddfce4d648e3",
+        "titulo": "The Witcher",
+        "plataforma": "Stewart Inc",
+        "temporadas": 10,
+        "genero": [
+            "Misterio",
+            "Aventura"
+        ],
+        "finalizada": true,
+        "año_estreno": 2002
+    }
+]
