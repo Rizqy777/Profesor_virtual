@@ -17,7 +17,7 @@ baseDatos = client["TV_StreamDB"]
 coleccion = baseDatos["series"]
 
 ## Insertar series de TV con todos los campos
-""" 
+
 for i in range(50):
     generos_reales = [
         "Drama",
@@ -272,7 +272,7 @@ resultados = list(baseDatos["series"].aggregate(pipeline))
 for doc in resultados:
     print(doc)
 
- """
+ 
 ## 7. Gasto financiero
 
 pipeline = [
