@@ -1,0 +1,389 @@
+[
+    {
+        "_id": "6942cede6dd64819a3e6d98e",
+        "titulo": "Poor if focus.",
+        "plataforma": "Bartlett, Gill and Peterson",
+        "temporadas": 3,
+        "genero": [
+            "Drama",
+            "Histórico"
+        ],
+        "puntuacion": 4.62,
+        "finalizada": true,
+        "año_estreno": 2025
+    },
+    {
+        "_id": "6942cede6dd64819a3e6d98f",
+        "titulo": "Officer example.",
+        "plataforma": "Curry, Smith and Smith",
+        "temporadas": 6,
+        "genero": [
+            "Fantasía",
+            "Histórico"
+        ],
+        "puntuacion": 6.76,
+        "finalizada": true,
+        "año_estreno": 2000
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d991",
+        "titulo": "Likely history.",
+        "plataforma": "Michael, Rogers and Jones",
+        "temporadas": 3,
+        "genero": [
+            "Thriller",
+            "Western"
+        ],
+        "puntuacion": 5.1,
+        "finalizada": true,
+        "año_estreno": 2001
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d996",
+        "titulo": "Late job partner save.",
+        "plataforma": "Townsend Inc",
+        "temporadas": 8,
+        "genero": [
+            "Terror",
+            "Comedia"
+        ],
+        "puntuacion": 7.42,
+        "finalizada": true,
+        "año_estreno": 2019
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d997",
+        "titulo": "Information myself appear pattern.",
+        "plataforma": "Williams-Johnson",
+        "temporadas": 4,
+        "genero": [
+            "Acción",
+            "Documental"
+        ],
+        "puntuacion": 5.53,
+        "finalizada": true,
+        "año_estreno": 1992
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d998",
+        "titulo": "Note suggest.",
+        "plataforma": "Reynolds-Little",
+        "temporadas": 1,
+        "genero": [
+            "Comedia",
+            "Documental"
+        ],
+        "puntuacion": 7.59,
+        "finalizada": true,
+        "año_estreno": 2019
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d99a",
+        "titulo": "Husband year.",
+        "plataforma": "Hunt, Obrien and Mcconnell",
+        "temporadas": 6,
+        "genero": [
+            "Histórico",
+            "Histórico"
+        ],
+        "puntuacion": 9.17,
+        "finalizada": true,
+        "año_estreno": 2024
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d99b",
+        "titulo": "Gun fall day.",
+        "plataforma": "Aguilar, Kirby and Smith",
+        "temporadas": 5,
+        "genero": [
+            "Terror",
+            "Aventura"
+        ],
+        "puntuacion": 6.43,
+        "finalizada": true,
+        "año_estreno": 1996
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d99c",
+        "titulo": "Plant able.",
+        "plataforma": "Stevens-Wagner",
+        "temporadas": 1,
+        "genero": [
+            "Thriller",
+            "Terror"
+        ],
+        "puntuacion": 5.12,
+        "finalizada": true,
+        "año_estreno": 1973
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d99e",
+        "titulo": "News eat heart heart.",
+        "plataforma": "Haynes Inc",
+        "temporadas": 10,
+        "genero": [
+            "Histórico",
+            "Crimen"
+        ],
+        "puntuacion": 9.73,
+        "finalizada": true,
+        "año_estreno": 1985
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d99f",
+        "titulo": "History high a.",
+        "plataforma": "Schwartz, Cherry and Durham",
+        "temporadas": 3,
+        "genero": [
+            "Western",
+            "Documental"
+        ],
+        "puntuacion": 5.64,
+        "finalizada": true,
+        "año_estreno": 2001
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a0",
+        "titulo": "Purpose despite impact.",
+        "plataforma": "Woods Inc",
+        "temporadas": 4,
+        "genero": [
+            "Comedia",
+            "Crimen"
+        ],
+        "puntuacion": 1.8,
+        "finalizada": true,
+        "año_estreno": 2023
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a1",
+        "titulo": "Experience significant.",
+        "plataforma": "Cox-Watkins",
+        "temporadas": 10,
+        "genero": [
+            "Terror",
+            "Documental"
+        ],
+        "puntuacion": 8.13,
+        "finalizada": true,
+        "año_estreno": 1978
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a2",
+        "titulo": "Career it however.",
+        "plataforma": "Hood, Austin and Jones",
+        "temporadas": 2,
+        "genero": [
+            "Misterio",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 1.8,
+        "finalizada": true,
+        "año_estreno": 2020
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a4",
+        "titulo": "Institution huge.",
+        "plataforma": "Hooper LLC",
+        "temporadas": 7,
+        "genero": [
+            "Misterio",
+            "Western"
+        ],
+        "puntuacion": 9.46,
+        "finalizada": true,
+        "año_estreno": 1984
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a6",
+        "titulo": "Walk view science.",
+        "plataforma": "Smith, Gonzalez and Shepherd",
+        "temporadas": 2,
+        "genero": [
+            "Drama",
+            "Aventura"
+        ],
+        "puntuacion": 3.97,
+        "finalizada": true,
+        "año_estreno": 1985
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9ab",
+        "titulo": "Body art.",
+        "plataforma": "Davis-Cuevas",
+        "temporadas": 8,
+        "genero": [
+            "Western",
+            "Romance"
+        ],
+        "puntuacion": 6.13,
+        "finalizada": true,
+        "año_estreno": 1977
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9ac",
+        "titulo": "Throughout instead arrive line.",
+        "plataforma": "Stone, Lyons and Brown",
+        "temporadas": 9,
+        "genero": [
+            "Animación",
+            "Western"
+        ],
+        "puntuacion": 6.21,
+        "finalizada": true,
+        "año_estreno": 1979
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9ae",
+        "titulo": "Off company.",
+        "plataforma": "Torres, Perez and Obrien",
+        "temporadas": 8,
+        "genero": [
+            "Western",
+            "Fantasía"
+        ],
+        "puntuacion": 2.64,
+        "finalizada": true,
+        "año_estreno": 2001
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9af",
+        "titulo": "Decade once.",
+        "plataforma": "Diaz, Newman and Gillespie",
+        "temporadas": 9,
+        "genero": [
+            "Musical",
+            "Western"
+        ],
+        "puntuacion": 6.19,
+        "finalizada": true,
+        "año_estreno": 2008
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b0",
+        "titulo": "Peace region since.",
+        "plataforma": "Richards, Kelly and Davis",
+        "temporadas": 8,
+        "genero": [
+            "Acción",
+            "Histórico"
+        ],
+        "puntuacion": 2.95,
+        "finalizada": true,
+        "año_estreno": 2010
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b2",
+        "titulo": "Reach only.",
+        "plataforma": "Jones Ltd",
+        "temporadas": 6,
+        "genero": [
+            "Misterio",
+            "Thriller"
+        ],
+        "puntuacion": 1.91,
+        "finalizada": true,
+        "año_estreno": 1989
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b5",
+        "titulo": "Born section usually.",
+        "plataforma": "Lutz LLC",
+        "temporadas": 2,
+        "genero": [
+            "Acción",
+            "Musical"
+        ],
+        "puntuacion": 7.27,
+        "finalizada": true,
+        "año_estreno": 1994
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b6",
+        "titulo": "A ready argue.",
+        "plataforma": "Hicks-Bryant",
+        "temporadas": 6,
+        "genero": [
+            "Romance",
+            "Terror"
+        ],
+        "puntuacion": 9.54,
+        "finalizada": true,
+        "año_estreno": 1980
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b7",
+        "titulo": "Since page industry.",
+        "plataforma": "Torres and Sons",
+        "temporadas": 2,
+        "genero": [
+            "Misterio",
+            "Misterio"
+        ],
+        "puntuacion": 8.29,
+        "finalizada": true,
+        "año_estreno": 1997
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b8",
+        "titulo": "Central dinner.",
+        "plataforma": "Mason LLC",
+        "temporadas": 6,
+        "genero": [
+            "Musical",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 4.79,
+        "finalizada": true,
+        "año_estreno": 2015
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b9",
+        "titulo": "Travel civil.",
+        "plataforma": "Taylor, Hamilton and Long",
+        "temporadas": 3,
+        "genero": [
+            "Documental",
+            "Crimen"
+        ],
+        "puntuacion": 5.7,
+        "finalizada": true,
+        "año_estreno": 1979
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9ba",
+        "titulo": "Apply identify.",
+        "plataforma": "Martin Group",
+        "temporadas": 9,
+        "genero": [
+            "Terror",
+            "Animación"
+        ],
+        "finalizada": true,
+        "año_estreno": 1972
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9c0",
+        "titulo": "Amount issue.",
+        "plataforma": "Mitchell LLC",
+        "temporadas": 1,
+        "genero": [
+            "Musical",
+            "Terror"
+        ],
+        "finalizada": true,
+        "año_estreno": 1986
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9c2",
+        "titulo": "Physical amount hot.",
+        "plataforma": "Goodwin-Vega",
+        "temporadas": 2,
+        "genero": [
+            "Western",
+            "Western"
+        ],
+        "finalizada": true,
+        "año_estreno": 2015
+    }
+]

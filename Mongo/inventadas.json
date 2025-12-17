@@ -1,0 +1,15 @@
+[
+    {
+        "_id": "6942cede6dd64819a3e6d98d",
+        "titulo": "Student also drive early.",
+        "plataforma": "Watson-Vargas",
+        "temporadas": 8,
+        "genero": [
+            "Animación",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 8.98,
+        "finalizada": false,
+        "año_estreno": 2008
+    }
+]

@@ -1,0 +1,15 @@
+[
+    {
+        "_id": "6942cedf6dd64819a3e6d9a0",
+        "titulo": "Purpose despite impact.",
+        "plataforma": "Woods Inc",
+        "temporadas": 4,
+        "genero": [
+            "Comedia",
+            "Crimen"
+        ],
+        "puntuacion": 1.8,
+        "finalizada": true,
+        "año_estreno": 2023
+    }
+]

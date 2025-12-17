@@ -1,0 +1,80 @@
+[
+    {
+        "_id": "6942cede6dd64819a3e6d98a",
+        "titulo": "Drive fine.",
+        "plataforma": "Taylor Group",
+        "temporadas": 8,
+        "genero": [
+            "Musical",
+            "Comedia"
+        ],
+        "puntuacion": 5.5,
+        "finalizada": false,
+        "año_estreno": 2014
+    },
+    {
+        "_id": "6942cede6dd64819a3e6d98c",
+        "titulo": "Try security later stock.",
+        "plataforma": "Floyd Ltd",
+        "temporadas": 7,
+        "genero": [
+            "Acción",
+            "Fantasía"
+        ],
+        "puntuacion": 8.31,
+        "finalizada": false,
+        "año_estreno": 2016
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d996",
+        "titulo": "Late job partner save.",
+        "plataforma": "Townsend Inc",
+        "temporadas": 8,
+        "genero": [
+            "Terror",
+            "Comedia"
+        ],
+        "puntuacion": 7.42,
+        "finalizada": true,
+        "año_estreno": 2019
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9ad",
+        "titulo": "Activity.",
+        "plataforma": "Waters Inc",
+        "temporadas": 7,
+        "genero": [
+            "Comedia",
+            "Comedia"
+        ],
+        "puntuacion": 7.14,
+        "finalizada": false,
+        "año_estreno": 2017
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b0",
+        "titulo": "Peace region since.",
+        "plataforma": "Richards, Kelly and Davis",
+        "temporadas": 8,
+        "genero": [
+            "Acción",
+            "Histórico"
+        ],
+        "puntuacion": 2.95,
+        "finalizada": true,
+        "año_estreno": 2010
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b8",
+        "titulo": "Central dinner.",
+        "plataforma": "Mason LLC",
+        "temporadas": 6,
+        "genero": [
+            "Musical",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 4.79,
+        "finalizada": true,
+        "año_estreno": 2015
+    }
+]

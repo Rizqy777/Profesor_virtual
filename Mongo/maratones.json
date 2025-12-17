@@ -1,0 +1,106 @@
+[
+    {
+        "_id": "6942cede6dd64819a3e6d98c",
+        "titulo": "Try security later stock.",
+        "plataforma": "Floyd Ltd",
+        "temporadas": 7,
+        "genero": [
+            "Acción",
+            "Fantasía"
+        ],
+        "puntuacion": 8.31,
+        "finalizada": false,
+        "año_estreno": 2016
+    },
+    {
+        "_id": "6942cede6dd64819a3e6d98d",
+        "titulo": "Student also drive early.",
+        "plataforma": "Watson-Vargas",
+        "temporadas": 8,
+        "genero": [
+            "Animación",
+            "Ciencia Ficción"
+        ],
+        "puntuacion": 8.98,
+        "finalizada": false,
+        "año_estreno": 2008
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d99a",
+        "titulo": "Husband year.",
+        "plataforma": "Hunt, Obrien and Mcconnell",
+        "temporadas": 6,
+        "genero": [
+            "Histórico",
+            "Histórico"
+        ],
+        "puntuacion": 9.17,
+        "finalizada": true,
+        "año_estreno": 2024
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d99e",
+        "titulo": "News eat heart heart.",
+        "plataforma": "Haynes Inc",
+        "temporadas": 10,
+        "genero": [
+            "Histórico",
+            "Crimen"
+        ],
+        "puntuacion": 9.73,
+        "finalizada": true,
+        "año_estreno": 1985
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a1",
+        "titulo": "Experience significant.",
+        "plataforma": "Cox-Watkins",
+        "temporadas": 10,
+        "genero": [
+            "Terror",
+            "Documental"
+        ],
+        "puntuacion": 8.13,
+        "finalizada": true,
+        "año_estreno": 1978
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a4",
+        "titulo": "Institution huge.",
+        "plataforma": "Hooper LLC",
+        "temporadas": 7,
+        "genero": [
+            "Misterio",
+            "Western"
+        ],
+        "puntuacion": 9.46,
+        "finalizada": true,
+        "año_estreno": 1984
+    },
+    {
+        "_id": "6942cedf6dd64819a3e6d9a8",
+        "titulo": "Film share.",
+        "plataforma": "Walton-Franco",
+        "temporadas": 10,
+        "genero": [
+            "Fantasía",
+            "Acción"
+        ],
+        "puntuacion": 9.45,
+        "finalizada": false,
+        "año_estreno": 2002
+    },
+    {
+        "_id": "6942cee06dd64819a3e6d9b6",
+        "titulo": "A ready argue.",
+        "plataforma": "Hicks-Bryant",
+        "temporadas": 6,
+        "genero": [
+            "Romance",
+            "Terror"
+        ],
+        "puntuacion": 9.54,
+        "finalizada": true,
+        "año_estreno": 1980
+    }
+]
