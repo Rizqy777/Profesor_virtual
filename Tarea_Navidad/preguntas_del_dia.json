@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-01-07T14:24:05.121045",
+  "total_preguntas": 4,
+  "preguntas": [
+    {
+      "fuente_origen": "MySQL",
+      "pregunta": "¿Cuál es el río más caudaloso del mundo?",
+      "opciones": [
+        "Amazonas",
+        "Nilo",
+        "Yangtsé",
+        "Misisipi"
+      ],
+      "respuesta_correcta": "AMAZONAS",
+      "dificultad": "Media",
+      "fecha_creacion": "2026-01-07",
+      "categoria": "Espectáculo"
+    },
+    {
+      "fuente_origen": "Redis",
+      "pregunta": "¿Qué planeta es conocido como el planeta rojo?",
+      "opciones": [
+        "Mercurio",
+        "Venus",
+        "Marte",
+        "Júpiter"
+      ],
+      "respuesta_correcta": "MARTE",
+      "dificultad": "Baja",
+      "fecha_creacion": "2026-01-07T13:04:32.393548",
+      "categoria": "Arte"
+    },
+    {
+      "fuente_origen": "PostgreSQL (RDS)",
+      "pregunta": "¿Cuál es la serie más vista en Disney+?",
+      "opciones": [
+        "The Mandalorian",
+        "WandaVision",
+        "Loki",
+        "Ms. Marvel"
+      ],
+      "respuesta_correcta": "THE MANDALORIAN",
+      "dificultad": "Media",
+      "fecha_creacion": "2024-01-17",
+      "categoria": "Espectáculo"
+    },
+    {
+      "fuente_origen": "MongoDB",
+      "pregunta": "¿Qué técnica usa Andy Warhol en sus obras?",
+      "opciones": [
+        "Serigrafía",
+        "Óleo",
+        "Acuarela",
+        "Fresco"
+      ],
+      "respuesta_correcta": "SERIGRAFÍA",
+      "dificultad": "Media",
+      "fecha_creacion": "2026-01-07",
+      "categoria": "Arte"
+    }
+  ]
+}
