@@ -1,11 +1,109 @@
 import boto3
 import time
 import os
+import json
 from dotenv import load_dotenv
 
 # Cargar variables de entorno desde .env
 load_dotenv()
 
+
+# ==================== GESTOR DE CONFIGURACIÓN ====================
+
+class ConfigManager:
+    """
+    Clase para gestionar la configuración persistente entre ejecuciones.
+    Guarda y carga los IDs de recursos en un archivo JSON.
+    """
+    
+    CONFIG_FILE = "aws_config.json"
+    
+    # Configuración por defecto
+    DEFAULT_CONFIG = {
+        "vpc_id": None,
+        "sg_id": None,
+        "subnet_id": None,
+        "instance_id": None,
+        "efs_id": None,
+        "volume_id": None,
+        "key_pairs_name": None,
+        "availability_zone": None,
+        "mount_target_id": None,
+        "s3_bucket": None
+    }
+    
+    @staticmethod
+    def cargar_config():
+        """
+        Carga la configuración desde el archivo JSON.
+        Si no existe, crea uno nuevo con valores por defecto.
+        """
+        if os.path.exists(ConfigManager.CONFIG_FILE):
+            try:
+                with open(ConfigManager.CONFIG_FILE, 'r') as f:
+                    config = json.load(f)
+                    print(f"✓ Configuración cargada desde {ConfigManager.CONFIG_FILE}")
+                    return config
+            except Exception as e:
+                print(f"⚠ Error al cargar configuración: {str(e)}")
+                return ConfigManager.DEFAULT_CONFIG.copy()
+        else:
+            print(f"ℹ Archivo de configuración no encontrado, creando nuevo...")
+            ConfigManager.guardar_config(ConfigManager.DEFAULT_CONFIG)
+            return ConfigManager.DEFAULT_CONFIG.copy()
+    
+    @staticmethod
+    def guardar_config(config):
+        """
+        Guarda la configuración en el archivo JSON.
+        """
+        try:
+            with open(ConfigManager.CONFIG_FILE, 'w') as f:
+                json.dump(config, f, indent=4)
+            print(f"✓ Configuración guardada en {ConfigManager.CONFIG_FILE}")
+        except Exception as e:
+            print(f"✗ Error al guardar configuración: {str(e)}")
+    
+    @staticmethod
+    def actualizar(key, value):
+        """
+        Actualiza un valor específico en la configuración.
+        """
+        config = ConfigManager.cargar_config()
+        config[key] = value
+        ConfigManager.guardar_config(config)
+    
+    @staticmethod
+    def obtener(key, default=None):
+        """
+        Obtiene un valor específico de la configuración.
+        """
+        config = ConfigManager.cargar_config()
+        return config.get(key, default)
+    
+    @staticmethod
+    def mostrar():
+        """
+        Muestra toda la configuración actual.
+        """
+        config = ConfigManager.cargar_config()
+        print("\n" + "=" * 80)
+        print("CONFIGURACIÓN ACTUAL (aws_config.json)")
+        print("=" * 80)
+        for key, value in config.items():
+            if value:
+                print(f"  {key}: {value}")
+            else:
+                print(f"  {key}: (no configurado)")
+        print("=" * 80)
+    
+    @staticmethod
+    def limpiar():
+        """
+        Limpia toda la configuración (la resetea a valores por defecto).
+        """
+        ConfigManager.guardar_config(ConfigManager.DEFAULT_CONFIG.copy())
+        print("✓ Configuración limpiada")
 
 class StorageManager:
     def __init__(self, region="us-east-1"):
@@ -19,7 +117,444 @@ class StorageManager:
         self.ec2_client = boto3.client("ec2", region_name=region)
         self.ec2_resource = boto3.resource("ec2", region_name=region)
         self.efs_client = boto3.client("efs", region_name=region)
+        self.s3_client = boto3.client("s3", region_name=region)
+        self.s3_resource = boto3.resource("s3", region_name=region)
 
+
+    def crear_bucket_s3(self, bucket_name, acl="private", encryption=False):
+        """
+        CREAR BUCKET S3 (Amazon Simple Storage Service)
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre único del bucket (debe ser único globalmente)
+                - Solo minúsculas, números, guiones
+                - Máximo 63 caracteres
+                - No puede empezar ni terminar con número
+
+        Parámetros OPCIONALES:
+            - acl (str): Control de acceso (private, public-read, public-read-write)
+                - 'private': Solo el propietario puede acceder (RECOMENDADO)
+                - 'public-read': Cualquiera puede leer
+                - 'public-read-write': Cualquiera puede leer y escribir
+            - encryption (bool): Encriptación en reposo (por defecto False)
+
+        Almacena: Contenedor para almacenar objetos (archivos, datos, etc.)
+        Casos de uso: Almacenar imágenes, backups, datos, logs, etc.
+        """
+        try:
+            bucket_name = bucket_name.lower()
+            print(f"\n[S3] Creando bucket: {bucket_name}...")
+            print(f"  ACL: {acl}")
+            print(f"  Encriptación: {encryption}")
+
+            # Parámetros obligatorios
+            params = {
+                "Bucket": bucket_name,  # OBLIGATORIO: Nombre del bucket
+                "ACL": acl,  # OPCIONAL: Control de acceso
+            }
+
+            # Crear bucket
+            response = self.s3_client.create_bucket(
+                Bucket=bucket_name,
+                ACL=acl,
+                CreateBucketConfiguration={"LocationConstraint": self.region}
+                if self.region != "us-east-1"
+                else {},
+            )
+
+            print(f"✓ Bucket creado: {bucket_name}")
+
+            # Agregar etiquetas al bucket
+            self.s3_client.put_bucket_tagging(
+                Bucket=bucket_name,
+                Tagging={"TagSet": [{"Key": "Nombre", "Value": bucket_name}]},
+            )
+
+            return bucket_name
+
+        except Exception as e:
+            if "BucketAlreadyOwnedByYou" in str(e):
+                print(f"⚠ Bucket '{bucket_name}' ya existe y te pertenece")
+                return bucket_name
+            elif "BucketAlreadyExists" in str(e):
+                print(f"✗ Error: Bucket '{bucket_name}' ya existe (pertenece a otro usuario)")
+                return None
+            print(f"✗ Error al crear bucket: {str(e)}")
+            return None
+
+
+    def crear_carpeta_s3(self, bucket_name, folder_name):
+        """
+        CREAR CARPETA EN S3 (Simular carpeta usando prefijo)
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - folder_name (str): Nombre de la carpeta (ej: "datos", "backup/2024")
+
+        NOTA: En S3, las "carpetas" no existen realmente, son prefijos de objetos
+              Para crear una carpeta, subimos un objeto vacío con "/" al final
+
+        Almacena: Prefijo para organizar objetos en el bucket
+        """
+        try:
+            print(f"\n[S3] Creando carpeta: {bucket_name}/{folder_name}/")
+
+            # Crear un objeto vacío para simular la carpeta
+            self.s3_client.put_object(
+                Bucket=bucket_name,
+                Key=f"{folder_name}/",  # OBLIGATORIO: Clave del objeto (carpeta)
+                Body=b"",  # Objeto vacío
+            )
+
+            print(f"✓ Carpeta creada: {folder_name}/")
+            return True
+
+        except Exception as e:
+            print(f"✗ Error al crear carpeta: {str(e)}")
+            return False
+
+    def subir_archivo_s3(self, bucket_name, file_path, s3_key):
+        """
+        SUBIR ARCHIVO A S3
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - file_path (str): Ruta local del archivo
+            - s3_key (str): Ruta en S3 (ej: "datos/archivo.csv")
+
+        Parámetros OPCIONALES:
+            - ExtraArgs: Metadatos, ACL, etc.
+            - Callback: Función para monitorear progreso
+
+        Almacena: Archivos en el bucket S3
+        Casos de uso: Subir datos, imágenes, backups, etc.
+        """
+        try:
+            print(f"\n[S3] Subiendo archivo a S3...")
+            print(f"  Bucket: {bucket_name}")
+            print(f"  Archivo local: {file_path}")
+            print(f"  Ruta en S3: {s3_key}")
+
+            # Verificar que el archivo existe
+            if not os.path.exists(file_path):
+                print(f"✗ Error: Archivo no encontrado: {file_path}")
+                return False
+
+            # Subir archivo
+            self.s3_client.upload_file(
+                file_path,
+                bucket_name,
+                s3_key,
+            )
+
+            print(f"✓ Archivo subido exitosamente")
+            return True
+
+        except Exception as e:
+            print(f"✗ Error al subir archivo: {str(e)}")
+            return False
+
+    def subir_contenido_s3(self, bucket_name, contenido, s3_key, content_type="text/plain"):
+        """
+        SUBIR CONTENIDO DIRECTO A S3 (sin archivo local)
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - contenido (str o bytes): Contenido a subir
+            - s3_key (str): Ruta en S3 (ej: "datos/archivo.csv")
+            - content_type (str): Tipo MIME (text/plain, text/csv, application/json, etc.)
+
+        Almacena: Contenido directo en S3 sin necesidad de archivo local
+        Casos de uso: Crear archivos dinámicamente, datos generados
+        """
+        try:
+            print(f"\n[S3] Subiendo contenido a S3...")
+            print(f"  Bucket: {bucket_name}")
+            print(f"  Ruta en S3: {s3_key}")
+            print(f"  Tipo: {content_type}")
+
+            # Convertir contenido a bytes si es string
+            if isinstance(contenido, str):
+                contenido = contenido.encode("utf-8")
+
+            # Subir contenido
+            self.s3_client.put_object(
+                Bucket=bucket_name,
+                Key=s3_key,  # OBLIGATORIO: Ruta del objeto
+                Body=contenido,  # OBLIGATORIO: Contenido
+                ContentType=content_type,  # OPCIONAL: Tipo MIME
+            )
+
+            print(f"✓ Contenido subido exitosamente")
+            return True
+
+        except Exception as e:
+            print(f"✗ Error al subir contenido: {str(e)}")
+            return False
+
+    def subir_contenido_s3_con_storage_class(self, bucket_name, contenido, s3_key, 
+                                         storage_class="STANDARD", content_type="text/plain"):
+        """
+        SUBIR CONTENIDO A S3 CON STORAGE CLASS ESPECÍFICA
+        
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - contenido (str o bytes): Contenido a subir
+            - s3_key (str): Ruta en S3
+            - storage_class (str): Clase de almacenamiento:
+                - 'STANDARD': Acceso frecuente (defecto, costo normal)
+                - 'STANDARD_IA': Acceso infrecuente (más barato, 30 días mínimo)
+                - 'INTELLIGENT_TIERING': Automático según acceso (variable)
+                - 'GLACIER': Archivo a largo plazo (muy barato, recuperación en horas)
+                - 'DEEP_ARCHIVE': Compliance/Backup (baratísimo, recuperación en 12+ horas)
+                - 'ONEZONE_IA': Una sola zona (más barato que STANDARD_IA)
+        
+        Almacena: Contenido con clase de almacenamiento específica
+        Casos de uso: Optimizar costos según patrón de acceso
+        """
+        try:
+            print(f"\n[S3] Subiendo contenido con Storage Class: {storage_class}...")
+            print(f"  Bucket: {bucket_name}")
+            print(f"  Ruta: {s3_key}")
+            print(f"  Storage Class: {storage_class}")
+            
+            if isinstance(contenido, str):
+                contenido = contenido.encode("utf-8")
+            
+            self.s3_client.put_object(
+                Bucket=bucket_name,
+                Key=s3_key,
+                Body=contenido,
+                ContentType=content_type,
+                StorageClass=storage_class  # CLAVE: Define la clase de almacenamiento
+            )
+            
+            print(f"✓ Contenido subido exitosamente con {storage_class}")
+            return True
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return False
+
+    def subir_archivo_s3_con_storage_class(self, bucket_name, file_path, s3_key, 
+                                        storage_class="STANDARD"):
+        """
+        SUBIR ARCHIVO A S3 CON STORAGE CLASS ESPECÍFICA
+        
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - file_path (str): Ruta local del archivo
+            - s3_key (str): Ruta en S3
+            - storage_class (str): Clase de almacenamiento (ver arriba)
+        
+        Casos de uso: Subir backups a Glacier, datos históricos a Deep Archive
+        """
+        try:
+            print(f"\n[S3] Subiendo archivo con Storage Class: {storage_class}...")
+            print(f"  Archivo local: {file_path}")
+            print(f"  Ruta en S3: {s3_key}")
+            
+            if not os.path.exists(file_path):
+                print(f"✗ Archivo no encontrado: {file_path}")
+                return False
+            
+            # Usar ExtraArgs para especificar StorageClass
+            self.s3_client.upload_file(
+                file_path,
+                bucket_name,
+                s3_key,
+                ExtraArgs={'StorageClass': storage_class}
+            )
+            
+            print(f"✓ Archivo subido con {storage_class}")
+            return True
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return False
+
+    
+    def listar_objetos_s3(self, bucket_name, prefix=""):
+        """
+        LISTAR OBJETOS EN S3
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+
+        Parámetros OPCIONALES:
+            - prefix (str): Filtrar por prefijo (ej: "datos/" para listar solo esa carpeta)
+
+        Retorna: Lista de objetos en el bucket
+        """
+        try:
+            print(f"\n[S3] Listando objetos en {bucket_name}...")
+
+            response = self.s3_client.list_objects_v2(
+                Bucket=bucket_name,
+                Prefix=prefix,  # OPCIONAL: Filtrar por prefijo
+            )
+
+            if "Contents" not in response:
+                print("  No hay objetos en el bucket")
+                return []
+
+            objetos = []
+            for obj in response["Contents"]:
+                tamaño = obj["Size"]
+                fecha = obj["LastModified"]
+                clave = obj["Key"]
+
+                # No mostrar carpetas vacías (terminan en /)
+                if not clave.endswith("/"):
+                    print(f"  - {clave} ({tamaño} bytes, {fecha})")
+                    objetos.append(clave)
+                else:
+                    print(f"  📁 {clave}")
+
+            return objetos
+
+        except Exception as e:
+            print(f"✗ Error al listar objetos: {str(e)}")
+            return []
+        
+    def descargar_objeto_s3(self, bucket_name, s3_key, file_path=None):
+        """
+        DESCARGAR OBJETO DESDE S3
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - s3_key (str): Ruta del objeto en S3 (ej: "datos/archivo.csv")
+
+        Parámetros OPCIONALES:
+            - file_path (str): Ruta local donde guardar (por defecto usa el nombre del objeto)
+
+        Retorna: Ruta donde se guardó el archivo
+        """
+        try:
+            print(f"\n[S3] Descargando objeto desde S3...")
+            print(f"  Bucket: {bucket_name}")
+            print(f"  Objeto: {s3_key}")
+
+            # Si no especifica ruta, usar el nombre del objeto
+            if not file_path:
+                file_path = os.path.basename(s3_key)
+
+            # Crear carpetas si no existen
+            os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
+
+            # Descargar archivo
+            self.s3_client.download_file(bucket_name, s3_key, file_path)
+
+            print(f"✓ Archivo descargado: {file_path}")
+            return file_path
+
+        except Exception as e:
+            print(f"✗ Error al descargar objeto: {str(e)}")
+            return None
+
+    def obtener_contenido_s3(self, bucket_name, s3_key):
+        """
+        OBTENER CONTENIDO DE UN OBJETO S3 (sin descargar archivo)
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - s3_key (str): Ruta del objeto (ej: "datos/archivo.csv")
+
+        Retorna: Contenido del objeto como bytes
+        """
+        try:
+            print(f"\n[S3] Obteniendo contenido desde S3...")
+            print(f"  Bucket: {bucket_name}")
+            print(f"  Objeto: {s3_key}")
+
+            response = self.s3_client.get_object(
+                Bucket=bucket_name,
+                Key=s3_key,  # OBLIGATORIO: Clave del objeto
+            )
+
+            # Leer contenido
+            contenido = response["Body"].read()
+
+            print(f"✓ Contenido obtenido ({len(contenido)} bytes)")
+            return contenido
+
+        except Exception as e:
+            print(f"✗ Error al obtener contenido: {str(e)}")
+            return None
+
+    def obtener_contenido_s3_como_texto(self, bucket_name, s3_key):
+        """
+        OBTENER CONTENIDO DE UN OBJETO S3 COMO TEXTO
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - s3_key (str): Ruta del objeto (ej: "datos/archivo.csv")
+
+        Retorna: Contenido como string
+        """
+        try:
+            contenido_bytes = self.obtener_contenido_s3(bucket_name, s3_key)
+            if contenido_bytes:
+                return contenido_bytes.decode("utf-8")
+            return None
+        except Exception as e:
+            print(f"✗ Error al decodificar contenido: {str(e)}")
+            return None
+
+    def eliminar_objeto_s3(self, bucket_name, s3_key):
+        """
+        ELIMINAR OBJETO DE S3
+
+        Parámetros OBLIGATORIOS:
+            - bucket_name (str): Nombre del bucket
+            - s3_key (str): Ruta del objeto a eliminar
+
+        ADVERTENCIA: Esta acción es irreversible
+        """
+        try:
+            print(f"\n[S3] Eliminando objeto: {s3_key}")
+
+            self.s3_client.delete_object(
+                Bucket=bucket_name,
+                Key=s3_key,  # OBLIGATORIO: Clave del objeto
+            )
+
+            print(f"✓ Objeto eliminado")
+            return True
+
+        except Exception as e:
+            print(f"✗ Error al eliminar objeto: {str(e)}")
+            return False
+
+    def eliminar_bucket_s3(self, bucket_name):
+        """
+        ELIMINAR BUCKET S3 (vacío)
+
+        Parámetro OBLIGATORIO:
+            - bucket_name (str): Nombre del bucket
+
+        NOTA: El bucket DEBE estar vacío para poder eliminarlo
+        ADVERTENCIA: Esta acción es irreversible
+        """
+        try:
+            print(f"\n[S3] Eliminando bucket: {bucket_name}")
+
+            # Primero, eliminar todos los objetos
+            print(f"  Limpiando objetos...")
+            objetos = self.listar_objetos_s3(bucket_name)
+            for obj in objetos:
+                self.eliminar_objeto_s3(bucket_name, obj)
+
+            # Eliminar el bucket
+            self.s3_client.delete_bucket(Bucket=bucket_name)
+
+            print(f"✓ Bucket eliminado")
+            return True
+
+        except Exception as e:
+            print(f"✗ Error al eliminar bucket: {str(e)}")
+            return False
+            
     # ==================== VPC/NETWORK MANAGEMENT ====================
 
     def obtener_vpc_predeterminada(self):
@@ -680,14 +1215,11 @@ df -h {mount_point}
             return []
 
 
-# ==================== PROGRAMA PRINCIPAL ====================
-def main():
+# ==================== PROGRAMA Security_Group_SUBNET_KeyPair ====================
 
-    print("=" * 80)
-    print("GESTOR DE ALMACENAMIENTO AWS (EC2, EBS, EFS)")
-    print("=" * 80)
+def main_security_group_subnet_keypairs():
 
-    # Inicializar manager
+    # Crear instancia
     manager = StorageManager(region="us-east-1")
 
     # ========== PASO 0: CREAR INFRAESTRUCTURA DE RED ==========
@@ -729,6 +1261,40 @@ def main():
         print("✗ No se pudo crear/verificar la key pair")
         return
 
+    # Guardar en archivo de configuración
+    ConfigManager.actualizar("sg_id", sg_id)
+    ConfigManager.actualizar("subnet_id", subnet_id)
+    ConfigManager.actualizar("key_pairs_name", key_name)
+    ConfigManager.actualizar("availability_zone", availability_zone)
+    
+    print("\n✓ Infraestructura guardada en aws_config.json")
+
+# ==================== PROGRAMA EC2_EFS_EBS ====================
+
+def main_ec2_efs_ebs():
+    
+    print("=" * 80)
+    print("GESTOR DE ALMACENAMIENTO AWS (EC2, EBS, EFS)")
+    print("=" * 80)
+
+    # Crear instancia
+    manager = StorageManager(region="us-east-1")
+
+    # Cargar configuración guardada
+    key_name = ConfigManager.obtener("key_pairs_name")
+    sg_id = ConfigManager.obtener("sg_id")
+    subnet_id = ConfigManager.obtener("subnet_id")
+    availability_zone = ConfigManager.obtener("availability_zone")
+    
+    if not all([key_name, sg_id, subnet_id]):
+        print("✗ Error: Debes ejecutar MAIN 1 primero para crear la infraestructura")
+        return
+    
+    print(f"\n[CONFIG] Usando datos guardados:")
+    print(f"  SG: {sg_id}")
+    print(f"  Subnet: {subnet_id}")
+    print(f"  Key: {key_name}")
+
     # # ========== PASO 1: CREAR Y GESTIONAR EC2 ==========
     print("\n\n>>> PASO 1: CREAR INSTANCIA EC2 <<<")
 
@@ -741,10 +1307,14 @@ def main():
         instance_name="mi-servidor-web",
         ami_id="ami-0ecb62995f68bb549",
         instance_type="t2.micro",
-        key_name="clave_casa",
+        key_name=key_name,
         security_group_name=sg_id,
-        user_data=user_data,  # Pasar el script de user_data
+        user_data=user_data,
     )
+
+    if not instance_id:
+        print("✗ Error: No se pudo crear la instancia EC2")
+        return
 
     if instance_id:
         manager.ec2_client.get_waiter("instance_running").wait(
@@ -767,13 +1337,17 @@ def main():
         manager.ejecutar_ec2(instance_id)
 
         time.sleep(3)
-        # ========== PASO 5: CREAR Y ASOCIAR EBS ==========
+
+    ConfigManager.actualizar("instance_id", instance_id)
+
+    # ========== PASO 5: CREAR Y ASOCIAR EBS ==========
     print("\n\n>>> PASO 5: CREAR VOLUMEN EBS <<<")
+
     volume_id = manager.crear_ebs(
         volume_name="mi-volumen-datos",
         size=20,
         volume_type="gp3",
-        availability_zone=availability_zone,  # Usa la misma AZ que la subred
+        availability_zone=availability_zone,
     )
 
     if volume_id:
@@ -784,8 +1358,9 @@ def main():
 
         print("\n>>> PASO 7: AGREGAR ARCHIVO A EBS <<<")
 
-        # ========== PASO 8: CREAR EFS ==========
+    ConfigManager.actualizar("volume_id", volume_id)
 
+    # ========== PASO 8: CREAR EFS ==========
     print("\n\n>>> PASO 8: CREAR EFS (SISTEMA DE ARCHIVOS COMPARTIDO) <<<")
     efs_id = manager.crear_efs(
         fs_name="mi-efs-compartido",
@@ -793,6 +1368,12 @@ def main():
         throughput_mode="bursting",
         encrypted=False,
     )
+
+    if not efs_id:
+        print("✗ Error: No se pudo crear EFS")
+        return
+
+    ConfigManager.actualizar("efs_id", efs_id)
 
     while True:
         estado = manager.efs_client.describe_file_systems(FileSystemId=efs_id)[
@@ -807,30 +1388,1139 @@ def main():
         time.sleep(2)
 
         # ========== PASO 9: CREAR MOUNT TARGET PARA EFS ==========
-
         print("\n\n>>> PASO 9: CREAR MOUNT TARGET PARA EFS <<<")
-        # Usar la subred obtenida al inicio
 
         if subnet_id:
             mount_target_id = manager.crear_mount_target(
                 fs_id=efs_id,
                 subnet_id=subnet_id,
-                security_group_ids=[sg_id],  # Usar el SG creado
+                security_group_ids=[sg_id],
             )
         else:
             print("No se pudo obtener el subnet_id, no se creará el Mount Target.")
             mount_target_id = None
 
         if mount_target_id:
+            ConfigManager.actualizar("mount_target_id", mount_target_id)
             time.sleep(2)
 
             # ========== PASO 10: LISTAR EFS DISPONIBLES ===
             print("\n\n>>> PASO 10: LISTAR EFS DISPONIBLES <<<")
             manager.listar_efs()
 
-    # ========== PASO 10: LIMPIAR RECURSOS ==========
-    print("\n\n>>> PASO 10: ELIMINAR INSTANCIA EC2 (LIMPIEZA) <<<")
-    manager.eliminar_ec2(instance_id)
+    print("\n✓ EC2, EBS y EFS guardados en aws_config.json")
 
 
-main()
+# ==================== PROGRAMA S3_STANDARD ====================
+
+def main_s3_STANDARD():
+    """
+    MAIN 3: S3 - Crear bucket, carpetas y archivos CSV
+    
+    Pasos:
+    1. Crear bucket S3 estándar
+    2. Crear carpetas dentro del bucket
+    3. Crear archivos CSV con datos
+    4. Listar objetos
+    5. Descargar/Obtener objetos
+    """
+    
+    print("=" * 80)
+    print("PARTE 3: S3 (SIMPLE STORAGE SERVICE)")
+    print("=" * 80)
+    
+    # Crear instancia de manager
+    manager = StorageManager(region="us-east-1")
+    
+    # PASO 1: Crear bucket S3
+    print("\n\n>>> PASO 1: CREAR BUCKET S3 <<<")
+    bucket_name = "mi-bucket-datos-" + str(int(time.time()))  # Nombre único
+    
+    bucket_creado = manager.crear_bucket_s3(
+        bucket_name=bucket_name,
+        acl="private",
+        encryption=False  # OPCIONAL: Encriptación
+    )
+    
+    if not bucket_creado:
+        print("✗ Error: No se pudo crear el bucket")
+        return
+    
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    # PASO 2: Crear carpetas en S3
+    print("\n\n>>> PASO 2: CREAR CARPETAS EN S3 <<<")
+    
+    carpetas = ["ventas", "clientes", "productos", "reportes"]
+    
+    for carpeta in carpetas:
+        manager.crear_carpeta_s3(bucket_name, carpeta)
+    
+    # PASO 3: Crear archivos CSV y subirlos
+    print("\n\n>>> PASO 3: CREAR Y SUBIR ARCHIVOS CSV <<<")
+    
+    # CSV 1: Datos de ventas
+    print("\n[CSV] Creando CSV de VENTAS...")
+    csv_ventas = """id,fecha,producto,cantidad,precio,total
+1,2024-01-01,Laptop,5,1200.00,6000.00
+2,2024-01-02,Mouse,50,25.00,1250.00
+3,2024-01-03,Teclado,30,75.00,2250.00
+4,2024-01-04,Monitor,10,300.00,3000.00
+5,2024-01-05,Auriculares,25,80.00,2000.00
+6,2024-01-06,Webcam,15,120.00,1800.00
+7,2024-01-07,SSD,8,450.00,3600.00
+8,2024-01-08,RAM,20,100.00,2000.00
+9,2024-01-09,Procesador,5,550.00,2750.00
+10,2024-01-10,Fuente,12,200.00,2400.00"""
+    
+    manager.subir_contenido_s3(
+        bucket_name=bucket_name,
+        contenido=csv_ventas,
+        s3_key="ventas/ventas_enero_2024.csv",  # Ruta con carpeta
+        content_type="text/csv"
+    )
+    
+    # CSV 2: Datos de clientes
+    print("\n[CSV] Creando CSV de CLIENTES...")
+    csv_clientes = """id,nombre,email,telefono,ciudad,activo
+101,Juan García,juan@example.com,555-0001,Madrid,true
+102,María López,maria@example.com,555-0002,Barcelona,true
+103,Carlos Rodríguez,carlos@example.com,555-0003,Valencia,false
+104,Ana Martínez,ana@example.com,555-0004,Sevilla,true
+105,Luis Fernández,luis@example.com,555-0005,Bilbao,true
+106,Elena Jiménez,elena@example.com,555-0006,Malaga,true
+107,David Pérez,david@example.com,555-0007,Murcia,false
+108,Sofia Gómez,sofia@example.com,555-0008,Palma,true
+109,Miguel Sánchez,miguel@example.com,555-0009,Las Palmas,true
+110,Isabel Ruiz,isabel@example.com,555-0010,Alicante,false"""
+    
+    manager.subir_contenido_s3(
+        bucket_name=bucket_name,
+        contenido=csv_clientes,
+        s3_key="clientes/clientes_activos.csv",
+        content_type="text/csv"
+    )
+    
+    # CSV 3: Datos de productos
+    print("\n[CSV] Creando CSV de PRODUCTOS...")
+    csv_productos = """id,nombre,categoria,precio,stock,proveedor
+1001,Laptop Dell XPS,Computadoras,1200.00,15,Dell Inc
+1002,Mouse Logitech,Periféricos,25.00,100,Logitech
+1003,Teclado Mecánico,Periféricos,75.00,45,Keychron
+1004,Monitor LG 27,Pantallas,300.00,8,LG
+1005,Auriculares Sony,Audio,80.00,60,Sony
+1006,Webcam HD,Accesorios,120.00,25,Logitech
+1007,SSD Samsung 1TB,Almacenamiento,450.00,20,Samsung
+1008,RAM DDR4 16GB,Componentes,100.00,50,Corsair
+1009,Procesador Intel,Componentes,550.00,12,Intel
+1010,Fuente 750W,Componentes,200.00,18,EVGA"""
+    
+    manager.subir_contenido_s3(
+        bucket_name=bucket_name,
+        contenido=csv_productos,
+        s3_key="productos/inventario.csv",
+        content_type="text/csv"
+    )
+    
+    # CSV 4: Reportes
+    print("\n[CSV] Creando CSV de REPORTES...")
+    csv_reportes = """mes,ingresos,gastos,ganancia,margen
+Enero,15100.00,8500.00,6600.00,0.437
+Febrero,18200.00,9100.00,9100.00,0.500
+Marzo,21500.00,10200.00,11300.00,0.525
+Abril,19800.00,9800.00,10000.00,0.505
+Mayo,23100.00,11000.00,12100.00,0.524
+Junio,25600.00,12000.00,13600.00,0.531"""
+    
+    manager.subir_contenido_s3(
+        bucket_name=bucket_name,
+        contenido=csv_reportes,
+        s3_key="reportes/resumen_financiero.csv",
+        content_type="text/csv"
+    )
+    
+    # PASO 4: Listar objetos en el bucket
+    print("\n\n>>> PASO 4: LISTAR TODOS LOS OBJETOS <<<")
+    todos_los_objetos = manager.listar_objetos_s3(bucket_name)
+    
+    # PASO 5: Listar objetos por carpeta
+    print("\n\n>>> PASO 5: LISTAR OBJETOS POR CARPETA <<<")
+    
+    print("\n[S3] Objetos en carpeta 'ventas':")
+    manager.listar_objetos_s3(bucket_name, prefix="ventas/")
+    
+    print("\n[S3] Objetos en carpeta 'clientes':")
+    manager.listar_objetos_s3(bucket_name, prefix="clientes/")
+    
+    # PASO 6: Obtener contenido de un objeto (sin descargar)
+    print("\n\n>>> PASO 6: OBTENER CONTENIDO DE OBJETO (EN MEMORIA) <<<")
+    
+    print("\n[S3] Obteniendo contenido de 'ventas/ventas_enero_2024.csv'...")
+    contenido_ventas = manager.obtener_contenido_s3_como_texto(
+        bucket_name=bucket_name,
+        s3_key="ventas/ventas_enero_2024.csv"
+    )
+    
+    if contenido_ventas:
+        print(f"\n[CONTENIDO] Primeras líneas del archivo:")
+        lineas = contenido_ventas.split("\n")[:5]
+        for linea in lineas:
+            print(f"  {linea}")
+        print(f"  ... ({len(contenido_ventas.split(chr(10)))} filas totales)")
+    
+    # PASO 7: Descargar objeto a archivo local
+    print("\n\n>>> PASO 7: DESCARGAR OBJETO A ARCHIVO LOCAL <<<")
+    
+    archivo_descargado = manager.descargar_objeto_s3(
+        bucket_name=bucket_name,
+        s3_key="clientes/clientes_activos.csv",
+        file_path="clientes_descargados.csv"
+    )
+    
+    # PASO 8: Obtener información de objetos específicos
+    print("\n\n>>> PASO 8: OBTENER INFORMACIÓN DE OBJETOS <<<")
+    
+    objetos_info = {
+        "ventas/ventas_enero_2024.csv": "Datos de ventas de enero",
+        "clientes/clientes_activos.csv": "Lista de clientes activos",
+        "productos/inventario.csv": "Inventario de productos",
+        "reportes/resumen_financiero.csv": "Resumen financiero del semestre"
+    }
+    
+    for obj_key, descripcion in objetos_info.items():
+        try:
+            metadata = manager.s3_client.head_object(
+                Bucket=bucket_name,
+                Key=obj_key
+            )
+            tamaño = metadata["ContentLength"]
+            print(f"\n[OBJETO] {obj_key}")
+            print(f"  Descripción: {descripcion}")
+            print(f"  Tamaño: {tamaño} bytes")
+            print(f"  Última modificación: {metadata['LastModified']}")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+    
+    # Guardar info del bucket en archivo de configuración
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    print("\n" + "=" * 80)
+    print("✓ S3 completado exitosamente")
+    print("=" * 80)
+    print(f"\nInformación del bucket:")
+    print(f"  Nombre: {bucket_name}")
+    print(f"  Región: us-east-1")
+    print(f"  Objetos creados: {len(todos_los_objetos)}")
+    
+# ==================== PROGRAMA S3_STANDARD_IA ====================
+
+def main_s3_STANDARD_IA():
+    """
+    MAIN 3: S3 - Crear bucket, carpetas y archivos CSV
+    
+    Pasos:
+    1. Crear bucket S3 estándar
+    2. Crear carpetas dentro del bucket
+    3. Crear archivos CSV con datos
+    4. Listar objetos
+    5. Descargar/Obtener objetos
+    """
+    
+    print("=" * 80)
+    print("PARTE 3: S3 (SIMPLE STORAGE SERVICE)")
+    print("=" * 80)
+    
+    # Crear instancia de manager
+    manager = StorageManager(region="us-east-1")
+    
+    # PASO 1: Crear bucket S3
+    print("\n\n>>> PASO 1: CREAR BUCKET S3 <<<")
+    bucket_name = "mi-bucket-datos-standard-ia" + str(int(time.time()))  # Nombre único
+    
+    bucket_creado = manager.crear_bucket_s3(
+        bucket_name=bucket_name,
+        acl="private",
+        encryption=False  # OPCIONAL: Encriptación
+    )
+    
+    if not bucket_creado:
+        print("✗ Error: No se pudo crear el bucket")
+        return
+    
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    # PASO 2: Crear carpetas en S3
+    print("\n\n>>> PASO 2: CREAR CARPETAS EN S3 <<<")
+    
+    carpetas = ["ventas", "clientes", "productos", "reportes"]
+    
+    for carpeta in carpetas:
+        manager.crear_carpeta_s3(bucket_name, carpeta)
+    
+    # PASO 3: Crear archivos CSV y subirlos
+    print("\n\n>>> PASO 3: CREAR Y SUBIR ARCHIVOS CSV <<<")
+    
+    # CSV 1: Datos de ventas
+    print("\n[CSV] Creando CSV de VENTAS...")
+    csv_ventas = """id,fecha,producto,cantidad,precio,total
+1,2024-01-01,Laptop,5,1200.00,6000.00
+2,2024-01-02,Mouse,50,25.00,1250.00
+3,2024-01-03,Teclado,30,75.00,2250.00
+4,2024-01-04,Monitor,10,300.00,3000.00
+5,2024-01-05,Auriculares,25,80.00,2000.00
+6,2024-01-06,Webcam,15,120.00,1800.00
+7,2024-01-07,SSD,8,450.00,3600.00
+8,2024-01-08,RAM,20,100.00,2000.00
+9,2024-01-09,Procesador,5,550.00,2750.00
+10,2024-01-10,Fuente,12,200.00,2400.00"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_ventas,
+        s3_key="ventas/ventas_enero_2024.csv",  # Ruta con carpeta
+        content_type="text/csv",
+        storage_class="STANDARD_IA"
+    )
+    
+    # CSV 2: Datos de clientes
+    print("\n[CSV] Creando CSV de CLIENTES...")
+    csv_clientes = """id,nombre,email,telefono,ciudad,activo
+101,Juan García,juan@example.com,555-0001,Madrid,true
+102,María López,maria@example.com,555-0002,Barcelona,true
+103,Carlos Rodríguez,carlos@example.com,555-0003,Valencia,false
+104,Ana Martínez,ana@example.com,555-0004,Sevilla,true
+105,Luis Fernández,luis@example.com,555-0005,Bilbao,true
+106,Elena Jiménez,elena@example.com,555-0006,Malaga,true
+107,David Pérez,david@example.com,555-0007,Murcia,false
+108,Sofia Gómez,sofia@example.com,555-0008,Palma,true
+109,Miguel Sánchez,miguel@example.com,555-0009,Las Palmas,true
+110,Isabel Ruiz,isabel@example.com,555-0010,Alicante,false"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_clientes,
+        s3_key="clientes/clientes_activos.csv",
+        content_type="text/csv",
+        storage_class="STANDARD_IA"
+    )
+    
+    # CSV 3: Datos de productos
+    print("\n[CSV] Creando CSV de PRODUCTOS...")
+    csv_productos = """id,nombre,categoria,precio,stock,proveedor
+1001,Laptop Dell XPS,Computadoras,1200.00,15,Dell Inc
+1002,Mouse Logitech,Periféricos,25.00,100,Logitech
+1003,Teclado Mecánico,Periféricos,75.00,45,Keychron
+1004,Monitor LG 27,Pantallas,300.00,8,LG
+1005,Auriculares Sony,Audio,80.00,60,Sony
+1006,Webcam HD,Accesorios,120.00,25,Logitech
+1007,SSD Samsung 1TB,Almacenamiento,450.00,20,Samsung
+1008,RAM DDR4 16GB,Componentes,100.00,50,Corsair
+1009,Procesador Intel,Componentes,550.00,12,Intel
+1010,Fuente 750W,Componentes,200.00,18,EVGA"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_productos,
+        s3_key="productos/inventario.csv",
+        content_type="text/csv",
+        storage_class="STANDARD_IA"
+    )
+    
+    # CSV 4: Reportes
+    print("\n[CSV] Creando CSV de REPORTES...")
+    csv_reportes = """mes,ingresos,gastos,ganancia,margen
+Enero,15100.00,8500.00,6600.00,0.437
+Febrero,18200.00,9100.00,9100.00,0.500
+Marzo,21500.00,10200.00,11300.00,0.525
+Abril,19800.00,9800.00,10000.00,0.505
+Mayo,23100.00,11000.00,12100.00,0.524
+Junio,25600.00,12000.00,13600.00,0.531"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_reportes,
+        s3_key="reportes/resumen_financiero.csv",
+        content_type="text/csv",
+        storage_class="STANDARD_IA"
+    )
+    
+    # PASO 4: Listar objetos en el bucket
+    print("\n\n>>> PASO 4: LISTAR TODOS LOS OBJETOS <<<")
+    todos_los_objetos = manager.listar_objetos_s3(bucket_name)
+    
+    # PASO 5: Listar objetos por carpeta
+    print("\n\n>>> PASO 5: LISTAR OBJETOS POR CARPETA <<<")
+    
+    print("\n[S3] Objetos en carpeta 'ventas':")
+    manager.listar_objetos_s3(bucket_name, prefix="ventas/")
+    
+    print("\n[S3] Objetos en carpeta 'clientes':")
+    manager.listar_objetos_s3(bucket_name, prefix="clientes/")
+    
+    # PASO 6: Obtener contenido de un objeto (sin descargar)
+    print("\n\n>>> PASO 6: OBTENER CONTENIDO DE OBJETO (EN MEMORIA) <<<")
+    
+    print("\n[S3] Obteniendo contenido de 'ventas/ventas_enero_2024.csv'...")
+    contenido_ventas = manager.obtener_contenido_s3_como_texto(
+        bucket_name=bucket_name,
+        s3_key="ventas/ventas_enero_2024.csv"
+    )
+    
+    if contenido_ventas:
+        print(f"\n[CONTENIDO] Primeras líneas del archivo:")
+        lineas = contenido_ventas.split("\n")[:5]
+        for linea in lineas:
+            print(f"  {linea}")
+        print(f"  ... ({len(contenido_ventas.split(chr(10)))} filas totales)")
+    
+    # PASO 7: Descargar objeto a archivo local
+    print("\n\n>>> PASO 7: DESCARGAR OBJETO A ARCHIVO LOCAL <<<")
+    
+    archivo_descargado = manager.descargar_objeto_s3(
+        bucket_name=bucket_name,
+        s3_key="clientes/clientes_activos.csv",
+        file_path="clientes_descargados.csv"
+    )
+    
+    # PASO 8: Obtener información de objetos específicos
+    print("\n\n>>> PASO 8: OBTENER INFORMACIÓN DE OBJETOS <<<")
+    
+    objetos_info = {
+        "ventas/ventas_enero_2024.csv": "Datos de ventas de enero",
+        "clientes/clientes_activos.csv": "Lista de clientes activos",
+        "productos/inventario.csv": "Inventario de productos",
+        "reportes/resumen_financiero.csv": "Resumen financiero del semestre"
+    }
+    
+    for obj_key, descripcion in objetos_info.items():
+        try:
+            metadata = manager.s3_client.head_object(
+                Bucket=bucket_name,
+                Key=obj_key
+            )
+            tamaño = metadata["ContentLength"]
+            print(f"\n[OBJETO] {obj_key}")
+            print(f"  Descripción: {descripcion}")
+            print(f"  Tamaño: {tamaño} bytes")
+            print(f"  Última modificación: {metadata['LastModified']}")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+    
+    # Guardar info del bucket en archivo de configuración
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    print("\n" + "=" * 80)
+    print("✓ S3 completado exitosamente")
+    print("=" * 80)
+    print(f"\nInformación del bucket:")
+    print(f"  Nombre: {bucket_name}")
+    print(f"  Región: us-east-1")
+    print(f"  Objetos creados: {len(todos_los_objetos)}")
+
+# ==================== PROGRAMA S3_INTELLIGENT_TIERING ====================    
+
+def main_s3_INTELLIGENT_TIERING():
+    """
+    MAIN 3: S3 - Crear bucket, carpetas y archivos CSV
+    
+    Pasos:
+    1. Crear bucket S3 estándar
+    2. Crear carpetas dentro del bucket
+    3. Crear archivos CSV con datos
+    4. Listar objetos
+    5. Descargar/Obtener objetos
+    """
+    
+    print("=" * 80)
+    print("PARTE 3: S3 (SIMPLE STORAGE SERVICE)")
+    print("=" * 80)
+    
+    # Crear instancia de manager
+    manager = StorageManager(region="us-east-1")
+    
+    # PASO 1: Crear bucket S3
+    print("\n\n>>> PASO 1: CREAR BUCKET S3 <<<")
+    bucket_name = "mi-bucket-datos-intelligent-tiering" + str(int(time.time()))  # Nombre único
+    
+    bucket_creado = manager.crear_bucket_s3(
+        bucket_name=bucket_name,
+        acl="private",
+        encryption=False  # OPCIONAL: Encriptación
+    )
+    
+    if not bucket_creado:
+        print("✗ Error: No se pudo crear el bucket")
+        return
+    
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    # PASO 2: Crear carpetas en S3
+    print("\n\n>>> PASO 2: CREAR CARPETAS EN S3 <<<")
+    
+    carpetas = ["ventas", "clientes", "productos", "reportes"]
+    
+    for carpeta in carpetas:
+        manager.crear_carpeta_s3(bucket_name, carpeta)
+    
+    # PASO 3: Crear archivos CSV y subirlos
+    print("\n\n>>> PASO 3: CREAR Y SUBIR ARCHIVOS CSV <<<")
+    
+    # CSV 1: Datos de ventas
+    print("\n[CSV] Creando CSV de VENTAS...")
+    csv_ventas = """id,fecha,producto,cantidad,precio,total
+1,2024-01-01,Laptop,5,1200.00,6000.00
+2,2024-01-02,Mouse,50,25.00,1250.00
+3,2024-01-03,Teclado,30,75.00,2250.00
+4,2024-01-04,Monitor,10,300.00,3000.00
+5,2024-01-05,Auriculares,25,80.00,2000.00
+6,2024-01-06,Webcam,15,120.00,1800.00
+7,2024-01-07,SSD,8,450.00,3600.00
+8,2024-01-08,RAM,20,100.00,2000.00
+9,2024-01-09,Procesador,5,550.00,2750.00
+10,2024-01-10,Fuente,12,200.00,2400.00"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_ventas,
+        s3_key="ventas/ventas_enero_2024.csv",  # Ruta con carpeta
+        content_type="text/csv",
+        storage_class="INTELLIGENT_TIERING"
+    )
+    
+    # CSV 2: Datos de clientes
+    print("\n[CSV] Creando CSV de CLIENTES...")
+    csv_clientes = """id,nombre,email,telefono,ciudad,activo
+101,Juan García,juan@example.com,555-0001,Madrid,true
+102,María López,maria@example.com,555-0002,Barcelona,true
+103,Carlos Rodríguez,carlos@example.com,555-0003,Valencia,false
+104,Ana Martínez,ana@example.com,555-0004,Sevilla,true
+105,Luis Fernández,luis@example.com,555-0005,Bilbao,true
+106,Elena Jiménez,elena@example.com,555-0006,Malaga,true
+107,David Pérez,david@example.com,555-0007,Murcia,false
+108,Sofia Gómez,sofia@example.com,555-0008,Palma,true
+109,Miguel Sánchez,miguel@example.com,555-0009,Las Palmas,true
+110,Isabel Ruiz,isabel@example.com,555-0010,Alicante,false"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_clientes,
+        s3_key="clientes/clientes_activos.csv",
+        content_type="text/csv",
+        storage_class="INTELLIGENT_TIERING"
+    )
+    
+    # CSV 3: Datos de productos
+    print("\n[CSV] Creando CSV de PRODUCTOS...")
+    csv_productos = """id,nombre,categoria,precio,stock,proveedor
+1001,Laptop Dell XPS,Computadoras,1200.00,15,Dell Inc
+1002,Mouse Logitech,Periféricos,25.00,100,Logitech
+1003,Teclado Mecánico,Periféricos,75.00,45,Keychron
+1004,Monitor LG 27,Pantallas,300.00,8,LG
+1005,Auriculares Sony,Audio,80.00,60,Sony
+1006,Webcam HD,Accesorios,120.00,25,Logitech
+1007,SSD Samsung 1TB,Almacenamiento,450.00,20,Samsung
+1008,RAM DDR4 16GB,Componentes,100.00,50,Corsair
+1009,Procesador Intel,Componentes,550.00,12,Intel
+1010,Fuente 750W,Componentes,200.00,18,EVGA"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_productos,
+        s3_key="productos/inventario.csv",
+        content_type="text/csv",
+        storage_class="INTELLIGENT_TIERING"
+    )
+    
+    # CSV 4: Reportes
+    print("\n[CSV] Creando CSV de REPORTES...")
+    csv_reportes = """mes,ingresos,gastos,ganancia,margen
+Enero,15100.00,8500.00,6600.00,0.437
+Febrero,18200.00,9100.00,9100.00,0.500
+Marzo,21500.00,10200.00,11300.00,0.525
+Abril,19800.00,9800.00,10000.00,0.505
+Mayo,23100.00,11000.00,12100.00,0.524
+Junio,25600.00,12000.00,13600.00,0.531"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_reportes,
+        s3_key="reportes/resumen_financiero.csv",
+        content_type="text/csv",
+        storage_class="INTELLIGENT_TIERING"
+    )
+    
+    # PASO 4: Listar objetos en el bucket
+    print("\n\n>>> PASO 4: LISTAR TODOS LOS OBJETOS <<<")
+    todos_los_objetos = manager.listar_objetos_s3(bucket_name)
+    
+    # PASO 5: Listar objetos por carpeta
+    print("\n\n>>> PASO 5: LISTAR OBJETOS POR CARPETA <<<")
+    
+    print("\n[S3] Objetos en carpeta 'ventas':")
+    manager.listar_objetos_s3(bucket_name, prefix="ventas/")
+    
+    print("\n[S3] Objetos en carpeta 'clientes':")
+    manager.listar_objetos_s3(bucket_name, prefix="clientes/")
+    
+    # PASO 6: Obtener contenido de un objeto (sin descargar)
+    print("\n\n>>> PASO 6: OBTENER CONTENIDO DE OBJETO (EN MEMORIA) <<<")
+    
+    print("\n[S3] Obteniendo contenido de 'ventas/ventas_enero_2024.csv'...")
+    contenido_ventas = manager.obtener_contenido_s3_como_texto(
+        bucket_name=bucket_name,
+        s3_key="ventas/ventas_enero_2024.csv"
+    )
+    
+    if contenido_ventas:
+        print(f"\n[CONTENIDO] Primeras líneas del archivo:")
+        lineas = contenido_ventas.split("\n")[:5]
+        for linea in lineas:
+            print(f"  {linea}")
+        print(f"  ... ({len(contenido_ventas.split(chr(10)))} filas totales)")
+    
+    # PASO 7: Descargar objeto a archivo local
+    print("\n\n>>> PASO 7: DESCARGAR OBJETO A ARCHIVO LOCAL <<<")
+    
+    archivo_descargado = manager.descargar_objeto_s3(
+        bucket_name=bucket_name,
+        s3_key="clientes/clientes_activos.csv",
+        file_path="clientes_descargados.csv"
+    )
+    
+    # PASO 8: Obtener información de objetos específicos
+    print("\n\n>>> PASO 8: OBTENER INFORMACIÓN DE OBJETOS <<<")
+    
+    objetos_info = {
+        "ventas/ventas_enero_2024.csv": "Datos de ventas de enero",
+        "clientes/clientes_activos.csv": "Lista de clientes activos",
+        "productos/inventario.csv": "Inventario de productos",
+        "reportes/resumen_financiero.csv": "Resumen financiero del semestre"
+    }
+    
+    for obj_key, descripcion in objetos_info.items():
+        try:
+            metadata = manager.s3_client.head_object(
+                Bucket=bucket_name,
+                Key=obj_key
+            )
+            tamaño = metadata["ContentLength"]
+            print(f"\n[OBJETO] {obj_key}")
+            print(f"  Descripción: {descripcion}")
+            print(f"  Tamaño: {tamaño} bytes")
+            print(f"  Última modificación: {metadata['LastModified']}")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+    
+    # Guardar info del bucket en archivo de configuración
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    print("\n" + "=" * 80)
+    print("✓ S3 completado exitosamente")
+    print("=" * 80)
+    print(f"\nInformación del bucket:")
+    print(f"  Nombre: {bucket_name}")
+    print(f"  Región: us-east-1")
+    print(f"  Objetos creados: {len(todos_los_objetos)}")
+
+
+# ==================== PROGRAMA S3_GLACIER ====================    
+
+def main_s3_GLACIER():
+    """
+    MAIN 3: S3 - Crear bucket, carpetas y archivos CSV
+    
+    Pasos:
+    1. Crear bucket S3
+    2. Crear carpetas dentro del bucket
+    3. Crear archivos CSV con datos
+    4. Listar objetos
+    5. Descargar/Obtener objetos
+    """
+    
+    print("=" * 80)
+    print("PARTE 3: S3 (SIMPLE STORAGE SERVICE)")
+    print("=" * 80)
+    
+    # Crear instancia de manager
+    manager = StorageManager(region="us-east-1")
+    
+    # PASO 1: Crear bucket S3
+    print("\n\n>>> PASO 1: CREAR BUCKET S3 <<<")
+    bucket_name = "mi-bucket-datos-glacier" + str(int(time.time()))  # Nombre único
+    
+    bucket_creado = manager.crear_bucket_s3(
+        bucket_name=bucket_name,
+        acl="private",
+        encryption=False  # OPCIONAL: Encriptación
+    )
+    
+    if not bucket_creado:
+        print("✗ Error: No se pudo crear el bucket")
+        return
+    
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    # PASO 2: Crear carpetas en S3
+    print("\n\n>>> PASO 2: CREAR CARPETAS EN S3 <<<")
+    
+    carpetas = ["ventas", "clientes", "productos", "reportes"]
+    
+    for carpeta in carpetas:
+        manager.crear_carpeta_s3(bucket_name, carpeta)
+    
+    # PASO 3: Crear archivos CSV y subirlos
+    print("\n\n>>> PASO 3: CREAR Y SUBIR ARCHIVOS CSV <<<")
+    
+    # CSV 1: Datos de ventas
+    print("\n[CSV] Creando CSV de VENTAS...")
+    csv_ventas = """id,fecha,producto,cantidad,precio,total
+1,2024-01-01,Laptop,5,1200.00,6000.00
+2,2024-01-02,Mouse,50,25.00,1250.00
+3,2024-01-03,Teclado,30,75.00,2250.00
+4,2024-01-04,Monitor,10,300.00,3000.00
+5,2024-01-05,Auriculares,25,80.00,2000.00
+6,2024-01-06,Webcam,15,120.00,1800.00
+7,2024-01-07,SSD,8,450.00,3600.00
+8,2024-01-08,RAM,20,100.00,2000.00
+9,2024-01-09,Procesador,5,550.00,2750.00
+10,2024-01-10,Fuente,12,200.00,2400.00"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_ventas,
+        s3_key="ventas/ventas_enero_2024.csv",  # Ruta con carpeta
+        content_type="text/csv",
+        storage_class="GLACIER"
+    )
+    
+    # CSV 2: Datos de clientes
+    print("\n[CSV] Creando CSV de CLIENTES...")
+    csv_clientes = """id,nombre,email,telefono,ciudad,activo
+101,Juan García,juan@example.com,555-0001,Madrid,true
+102,María López,maria@example.com,555-0002,Barcelona,true
+103,Carlos Rodríguez,carlos@example.com,555-0003,Valencia,false
+104,Ana Martínez,ana@example.com,555-0004,Sevilla,true
+105,Luis Fernández,luis@example.com,555-0005,Bilbao,true
+106,Elena Jiménez,elena@example.com,555-0006,Malaga,true
+107,David Pérez,david@example.com,555-0007,Murcia,false
+108,Sofia Gómez,sofia@example.com,555-0008,Palma,true
+109,Miguel Sánchez,miguel@example.com,555-0009,Las Palmas,true
+110,Isabel Ruiz,isabel@example.com,555-0010,Alicante,false"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_clientes,
+        s3_key="clientes/clientes_activos.csv",
+        content_type="text/csv",
+        storage_class="GLACIER"
+    )
+    
+    # CSV 3: Datos de productos
+    print("\n[CSV] Creando CSV de PRODUCTOS...")
+    csv_productos = """id,nombre,categoria,precio,stock,proveedor
+1001,Laptop Dell XPS,Computadoras,1200.00,15,Dell Inc
+1002,Mouse Logitech,Periféricos,25.00,100,Logitech
+1003,Teclado Mecánico,Periféricos,75.00,45,Keychron
+1004,Monitor LG 27,Pantallas,300.00,8,LG
+1005,Auriculares Sony,Audio,80.00,60,Sony
+1006,Webcam HD,Accesorios,120.00,25,Logitech
+1007,SSD Samsung 1TB,Almacenamiento,450.00,20,Samsung
+1008,RAM DDR4 16GB,Componentes,100.00,50,Corsair
+1009,Procesador Intel,Componentes,550.00,12,Intel
+1010,Fuente 750W,Componentes,200.00,18,EVGA"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_productos,
+        s3_key="productos/inventario.csv",
+        content_type="text/csv",
+        storage_class="GLACIER"
+    )
+    
+    # CSV 4: Reportes
+    print("\n[CSV] Creando CSV de REPORTES...")
+    csv_reportes = """mes,ingresos,gastos,ganancia,margen
+Enero,15100.00,8500.00,6600.00,0.437
+Febrero,18200.00,9100.00,9100.00,0.500
+Marzo,21500.00,10200.00,11300.00,0.525
+Abril,19800.00,9800.00,10000.00,0.505
+Mayo,23100.00,11000.00,12100.00,0.524
+Junio,25600.00,12000.00,13600.00,0.531"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_reportes,
+        s3_key="reportes/resumen_financiero.csv",
+        content_type="text/csv",
+        storage_class="GLACIER"
+    )
+    
+    # PASO 4: Listar objetos en el bucket
+    print("\n\n>>> PASO 4: LISTAR TODOS LOS OBJETOS <<<")
+    todos_los_objetos = manager.listar_objetos_s3(bucket_name)
+    
+    # PASO 5: Listar objetos por carpeta
+    print("\n\n>>> PASO 5: LISTAR OBJETOS POR CARPETA <<<")
+    
+    print("\n[S3] Objetos en carpeta 'ventas':")
+    manager.listar_objetos_s3(bucket_name, prefix="ventas/")
+    
+    print("\n[S3] Objetos en carpeta 'clientes':")
+    manager.listar_objetos_s3(bucket_name, prefix="clientes/")
+    
+    # PASO 6: Obtener contenido de un objeto (sin descargar)
+    print("\n\n>>> PASO 6: OBTENER CONTENIDO DE OBJETO (EN MEMORIA) <<<")
+    
+    print("\n[S3] Obteniendo contenido de 'ventas/ventas_enero_2024.csv'...")
+    contenido_ventas = manager.obtener_contenido_s3_como_texto(
+        bucket_name=bucket_name,
+        s3_key="ventas/ventas_enero_2024.csv"
+    )
+    
+    if contenido_ventas:
+        print(f"\n[CONTENIDO] Primeras líneas del archivo:")
+        lineas = contenido_ventas.split("\n")[:5]
+        for linea in lineas:
+            print(f"  {linea}")
+        print(f"  ... ({len(contenido_ventas.split(chr(10)))} filas totales)")
+    
+    # PASO 7: Descargar objeto a archivo local
+    print("\n\n>>> PASO 7: DESCARGAR OBJETO A ARCHIVO LOCAL <<<")
+    
+    archivo_descargado = manager.descargar_objeto_s3(
+        bucket_name=bucket_name,
+        s3_key="clientes/clientes_activos.csv",
+        file_path="clientes_descargados.csv"
+    )
+    
+    # PASO 8: Obtener información de objetos específicos
+    print("\n\n>>> PASO 8: OBTENER INFORMACIÓN DE OBJETOS <<<")
+    
+    objetos_info = {
+        "ventas/ventas_enero_2024.csv": "Datos de ventas de enero",
+        "clientes/clientes_activos.csv": "Lista de clientes activos",
+        "productos/inventario.csv": "Inventario de productos",
+        "reportes/resumen_financiero.csv": "Resumen financiero del semestre"
+    }
+    
+    for obj_key, descripcion in objetos_info.items():
+        try:
+            metadata = manager.s3_client.head_object(
+                Bucket=bucket_name,
+                Key=obj_key
+            )
+            tamaño = metadata["ContentLength"]
+            print(f"\n[OBJETO] {obj_key}")
+            print(f"  Descripción: {descripcion}")
+            print(f"  Tamaño: {tamaño} bytes")
+            print(f"  Última modificación: {metadata['LastModified']}")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+    
+    # Guardar info del bucket en archivo de configuración
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    print("\n" + "=" * 80)
+    print("✓ S3 completado exitosamente")
+    print("=" * 80)
+    print(f"\nInformación del bucket:")
+    print(f"  Nombre: {bucket_name}")
+    print(f"  Región: us-east-1")
+    print(f"  Objetos creados: {len(todos_los_objetos)}")
+
+     
+
+# ==================== PROGRAMA S3_DEEP_ARCHIVE ====================    
+
+def main_s3_DEEP_ARCHIVE():
+    """
+    MAIN 3: S3 - Crear bucket, carpetas y archivos CSV
+    
+    Pasos:
+    1. Crear bucket S3
+    2. Crear carpetas dentro del bucket
+    3. Crear archivos CSV con datos
+    4. Listar objetos
+    5. Descargar/Obtener objetos
+    """
+    
+    print("=" * 80)
+    print("PARTE 3: S3 (SIMPLE STORAGE SERVICE)")
+    print("=" * 80)
+    
+    # Crear instancia de manager
+    manager = StorageManager(region="us-east-1")
+    
+    # PASO 1: Crear bucket S3
+    print("\n\n>>> PASO 1: CREAR BUCKET S3 <<<")
+    bucket_name = "mi-bucket-datos-deep-archive" + str(int(time.time()))  # Nombre único
+    
+    bucket_creado = manager.crear_bucket_s3(
+        bucket_name=bucket_name,
+        acl="private",
+        encryption=False  # OPCIONAL: Encriptación
+    )
+    
+    if not bucket_creado:
+        print("✗ Error: No se pudo crear el bucket")
+        return
+    
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    # PASO 2: Crear carpetas en S3
+    print("\n\n>>> PASO 2: CREAR CARPETAS EN S3 <<<")
+    
+    carpetas = ["ventas", "clientes", "productos", "reportes"]
+    
+    for carpeta in carpetas:
+        manager.crear_carpeta_s3(bucket_name, carpeta)
+    
+    # PASO 3: Crear archivos CSV y subirlos
+    print("\n\n>>> PASO 3: CREAR Y SUBIR ARCHIVOS CSV <<<")
+    
+    # CSV 1: Datos de ventas
+    print("\n[CSV] Creando CSV de VENTAS...")
+    csv_ventas = """id,fecha,producto,cantidad,precio,total
+1,2024-01-01,Laptop,5,1200.00,6000.00
+2,2024-01-02,Mouse,50,25.00,1250.00
+3,2024-01-03,Teclado,30,75.00,2250.00
+4,2024-01-04,Monitor,10,300.00,3000.00
+5,2024-01-05,Auriculares,25,80.00,2000.00
+6,2024-01-06,Webcam,15,120.00,1800.00
+7,2024-01-07,SSD,8,450.00,3600.00
+8,2024-01-08,RAM,20,100.00,2000.00
+9,2024-01-09,Procesador,5,550.00,2750.00
+10,2024-01-10,Fuente,12,200.00,2400.00"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_ventas,
+        s3_key="ventas/ventas_enero_2024.csv",  # Ruta con carpeta
+        content_type="text/csv",
+        storage_class="DEEP_ARCHIVE"
+    )
+    
+    # CSV 2: Datos de clientes
+    print("\n[CSV] Creando CSV de CLIENTES...")
+    csv_clientes = """id,nombre,email,telefono,ciudad,activo
+101,Juan García,juan@example.com,555-0001,Madrid,true
+102,María López,maria@example.com,555-0002,Barcelona,true
+103,Carlos Rodríguez,carlos@example.com,555-0003,Valencia,false
+104,Ana Martínez,ana@example.com,555-0004,Sevilla,true
+105,Luis Fernández,luis@example.com,555-0005,Bilbao,true
+106,Elena Jiménez,elena@example.com,555-0006,Malaga,true
+107,David Pérez,david@example.com,555-0007,Murcia,false
+108,Sofia Gómez,sofia@example.com,555-0008,Palma,true
+109,Miguel Sánchez,miguel@example.com,555-0009,Las Palmas,true
+110,Isabel Ruiz,isabel@example.com,555-0010,Alicante,false"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_clientes,
+        s3_key="clientes/clientes_activos.csv",
+        content_type="text/csv",
+        storage_class="DEEP_ARCHIVE"
+    )
+    
+    # CSV 3: Datos de productos
+    print("\n[CSV] Creando CSV de PRODUCTOS...")
+    csv_productos = """id,nombre,categoria,precio,stock,proveedor
+1001,Laptop Dell XPS,Computadoras,1200.00,15,Dell Inc
+1002,Mouse Logitech,Periféricos,25.00,100,Logitech
+1003,Teclado Mecánico,Periféricos,75.00,45,Keychron
+1004,Monitor LG 27,Pantallas,300.00,8,LG
+1005,Auriculares Sony,Audio,80.00,60,Sony
+1006,Webcam HD,Accesorios,120.00,25,Logitech
+1007,SSD Samsung 1TB,Almacenamiento,450.00,20,Samsung
+1008,RAM DDR4 16GB,Componentes,100.00,50,Corsair
+1009,Procesador Intel,Componentes,550.00,12,Intel
+1010,Fuente 750W,Componentes,200.00,18,EVGA"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_productos,
+        s3_key="productos/inventario.csv",
+        content_type="text/csv",
+        storage_class="DEEP_ARCHIVE"
+    )
+    
+    # CSV 4: Reportes
+    print("\n[CSV] Creando CSV de REPORTES...")
+    csv_reportes = """mes,ingresos,gastos,ganancia,margen
+Enero,15100.00,8500.00,6600.00,0.437
+Febrero,18200.00,9100.00,9100.00,0.500
+Marzo,21500.00,10200.00,11300.00,0.525
+Abril,19800.00,9800.00,10000.00,0.505
+Mayo,23100.00,11000.00,12100.00,0.524
+Junio,25600.00,12000.00,13600.00,0.531"""
+    
+    manager.subir_contenido_s3_con_storage_class(
+        bucket_name=bucket_name,
+        contenido=csv_reportes,
+        s3_key="reportes/resumen_financiero.csv",
+        content_type="text/csv",
+        storage_class="DEEP_ARCHIVE"
+    )
+    
+    # PASO 4: Listar objetos en el bucket
+    print("\n\n>>> PASO 4: LISTAR TODOS LOS OBJETOS <<<")
+    todos_los_objetos = manager.listar_objetos_s3(bucket_name)
+    
+    # PASO 5: Listar objetos por carpeta
+    print("\n\n>>> PASO 5: LISTAR OBJETOS POR CARPETA <<<")
+    
+    print("\n[S3] Objetos en carpeta 'ventas':")
+    manager.listar_objetos_s3(bucket_name, prefix="ventas/")
+    
+    print("\n[S3] Objetos en carpeta 'clientes':")
+    manager.listar_objetos_s3(bucket_name, prefix="clientes/")
+    
+    # PASO 6: Obtener contenido de un objeto (sin descargar)
+    print("\n\n>>> PASO 6: OBTENER CONTENIDO DE OBJETO (EN MEMORIA) <<<")
+    
+    print("\n[S3] Obteniendo contenido de 'ventas/ventas_enero_2024.csv'...")
+    contenido_ventas = manager.obtener_contenido_s3_como_texto(
+        bucket_name=bucket_name,
+        s3_key="ventas/ventas_enero_2024.csv"
+    )
+    
+    if contenido_ventas:
+        print(f"\n[CONTENIDO] Primeras líneas del archivo:")
+        lineas = contenido_ventas.split("\n")[:5]
+        for linea in lineas:
+            print(f"  {linea}")
+        print(f"  ... ({len(contenido_ventas.split(chr(10)))} filas totales)")
+    
+    # PASO 7: Descargar objeto a archivo local
+    print("\n\n>>> PASO 7: DESCARGAR OBJETO A ARCHIVO LOCAL <<<")
+    
+    archivo_descargado = manager.descargar_objeto_s3(
+        bucket_name=bucket_name,
+        s3_key="clientes/clientes_activos.csv",
+        file_path="clientes_descargados.csv"
+    )
+    
+    # PASO 8: Obtener información de objetos específicos
+    print("\n\n>>> PASO 8: OBTENER INFORMACIÓN DE OBJETOS <<<")
+    
+    objetos_info = {
+        "ventas/ventas_enero_2024.csv": "Datos de ventas de enero",
+        "clientes/clientes_activos.csv": "Lista de clientes activos",
+        "productos/inventario.csv": "Inventario de productos",
+        "reportes/resumen_financiero.csv": "Resumen financiero del semestre"
+    }
+    
+    for obj_key, descripcion in objetos_info.items():
+        try:
+            metadata = manager.s3_client.head_object(
+                Bucket=bucket_name,
+                Key=obj_key
+            )
+            tamaño = metadata["ContentLength"]
+            print(f"\n[OBJETO] {obj_key}")
+            print(f"  Descripción: {descripcion}")
+            print(f"  Tamaño: {tamaño} bytes")
+            print(f"  Última modificación: {metadata['LastModified']}")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+    
+    # Guardar info del bucket en archivo de configuración
+    ConfigManager.actualizar("s3_bucket", bucket_name)
+    
+    print("\n" + "=" * 80)
+    print("✓ S3 completado exitosamente")
+    print("=" * 80)
+    print(f"\nInformación del bucket:")
+    print(f"  Nombre: {bucket_name}")
+    print(f"  Región: us-east-1")
+    print(f"  Objetos creados: {len(todos_los_objetos)}")
+
+   
+
+# ==================== PROGRAMA PRINCIPAL ====================
+
+def main_selector():
+    """
+    Selector interactivo para ejecutar los mains
+    """
+    while True:
+        print("\n" + "=" * 80)
+        print("SELECTOR DE PARTES - ALMACENAMIENTO AWS")
+        print("=" * 80)
+        print("\n1. Crear Infraestructura (VPC, SG, Subnet, KeyPair)")
+        print("2. EC2, EBS, EFS")
+        print("3. S3_STANDART")
+        print("4. S3_STANDARD_IA")
+        print("5. S3_INTELLIGENT_TIERING")
+        print("6. S3_GLACIER")
+        print("7. S3_DEEP_ARCHIVE")
+        print("8. Ver configuración guardada (aws_config.json)")
+        print("9. Ejecutar todas las partes en orden")
+        print("10. Limpiar configuración")
+        print("0. Salir")
+        
+        opcion = input("\nSelecciona una opción (0-6): ").strip()
+        
+        if opcion == "1":
+            main_security_group_subnet_keypairs()
+        elif opcion == "2":
+            main_ec2_efs_ebs()
+        elif opcion == "3":
+            main_s3_STANDARD()
+        elif opcion == "4":
+            main_s3_STANDARD_IA()
+        elif opcion == "5":
+            main_s3_INTELLIGENT_TIERING()
+        elif opcion == "6":
+            main_s3_GLACIER()
+        elif opcion == "7":
+            main_s3_DEEP_ARCHIVE()
+        elif opcion == "8":
+            ConfigManager.mostrar()
+        elif opcion == "9":
+            print("\nEjecutando todas las partes en orden...\n")
+            main_security_group_subnet_keypairs()
+            print("\n" + "=" * 80)
+            print("Infraestructura creada. Presiona ENTER para continuar...")
+            input()
+            
+            main_ec2_efs_ebs()
+            print("\n" + "=" * 80)
+            print("EC2, EBS y EFS creados. Presiona ENTER para continuar...")
+            input()
+            
+            main_s3_STANDARD()
+            print("\n" + "=" * 80)
+            print("S3 STANDARD creado. Todas las partes completadas.")
+
+            main_s3_STANDARD_IA()
+            print("\n" + "=" * 80)
+            print("S3 STANDARD IA creado. Todas las partes completadas.")
+
+            main_s3_INTELLIGENT_TIERING()
+            print("\n" + "=" * 80)
+            print("S3 INTELLIGENT TIERING creado. Todas las partes completadas.")
+
+            main_s3_GLACIER()
+            print("\n" + "=" * 80)
+            print("S3 GLACIER creado. Todas las partes completadas.")
+
+            main_s3_DEEP_ARCHIVE()
+            print("\n" + "=" * 80)
+            print("S3 DEEP ARCHIVE creado. Todas las partes completadas.")
+        elif opcion == "10":
+            confirmacion = input("\n¿Estás seguro de que deseas limpiar la configuración? (s/n): ").strip().lower()
+            if confirmacion == "s":
+                ConfigManager.limpiar()
+            else:
+                print("Operación cancelada")
+        elif opcion == "0":
+            print("Saliendo...")
+            break
+        else:
+            print("✗ Opción no válida")
+
+
+if __name__ == '__main__':
+    main_selector()
+

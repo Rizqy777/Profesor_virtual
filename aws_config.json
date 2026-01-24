@@ -1,0 +1,12 @@
+{
+    "vpc_id": null,
+    "sg_id": null,
+    "subnet_id": null,
+    "instance_id": null,
+    "efs_id": null,
+    "volume_id": null,
+    "key_pairs_name": null,
+    "availability_zone": null,
+    "mount_target_id": null,
+    "s3_bucket": "mi-bucket-datos-deep-archive1769271626"
+}
