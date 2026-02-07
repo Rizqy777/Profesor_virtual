@@ -105,6 +105,8 @@ class ConfigManager:
         ConfigManager.guardar_config(ConfigManager.DEFAULT_CONFIG.copy())
         print("✓ Configuración limpiada")
 
+# ==================== GESTOR DE ALMACENAMIENTO ====================
+
 class StorageManager:
     def __init__(self, region="us-east-1"):
         """
@@ -119,7 +121,7 @@ class StorageManager:
         self.efs_client = boto3.client("efs", region_name=region)
         self.s3_client = boto3.client("s3", region_name=region)
         self.s3_resource = boto3.resource("s3", region_name=region)
-
+        self.athena_client = boto3.client("athena", region_name=region)
 
     def crear_bucket_s3(self, bucket_name, acl="private", encryption=False):
         """
@@ -554,7 +556,294 @@ class StorageManager:
         except Exception as e:
             print(f"✗ Error al eliminar bucket: {str(e)}")
             return False
+    
+    def habilitar_versionado_s3(self, bucket_name):
+        """
+        HABILITAR VERSIONADO EN S3
+        
+        Permite guardar múltiples versiones de un objeto
+        
+        Parámetros:
+            - bucket_name: Nombre del bucket
+        """
+        try:
+            print(f"\n[S3] Habilitando versionado en {bucket_name}...")
             
+            self.s3_client.put_bucket_versioning(
+                Bucket=bucket_name,
+                VersioningConfiguration={'Status': 'Enabled'}
+            )
+            
+            print(f"✓ Versionado habilitado")
+            return True
+        
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return False
+
+    def obtener_versiones_objeto(self, bucket_name, s3_key):
+        """
+        OBTENER TODAS LAS VERSIONES DE UN OBJETO
+        
+        Retorna lista de versiones con sus IDs
+        """
+        try:
+            print(f"\n[S3] Listando versiones de {s3_key}...")
+            
+            response = self.s3_client.list_object_versions(
+                Bucket=bucket_name,
+                Prefix=s3_key
+            )
+            
+            versiones = []
+            if 'Versions' in response:
+                for version in response['Versions']:
+                    versiones.append({
+                        'VersionId': version['VersionId'],
+                        'LastModified': version['LastModified'],
+                        'Size': version['Size'],
+                        'IsLatest': version['IsLatest']
+                    })
+                    
+                    print(f"\n  Versión: {version['VersionId']}")
+                    print(f"    Última: {version['IsLatest']}")
+                    print(f"    Fecha: {version['LastModified']}")
+                    print(f"    Tamaño: {version['Size']} bytes")
+            
+            return versiones
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return []
+
+    def obtener_version_especifica(self, bucket_name, s3_key, version_id):
+        """
+        OBTENER UNA VERSION ESPECIFICA DE UN OBJETO
+        """
+        try:
+            print(f"\n[S3] Obteniendo versión {version_id[:8]}... del objeto {s3_key}")
+            
+            response = self.s3_client.get_object(
+                Bucket=bucket_name,
+                Key=s3_key,
+                VersionId=version_id
+            )
+            
+            contenido = response['Body'].read()
+            print(f"✓ Contenido obtenido ({len(contenido)} bytes)")
+            
+            return contenido
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return None    
+        
+    # ==================== ATHENA ====================
+
+    def crear_tabla_athena_csv(self, database_name, table_name, bucket_name, 
+                          csv_path, columns):
+        """
+        CREAR TABLA ATHENA DESDE CSV EN S3
+        
+        Parámetros:
+            - database_name: Nombre de la base de datos
+            - table_name: Nombre de la tabla
+            - bucket_name: Bucket S3 donde están los datos
+            - csv_path: Ruta en S3 de los archivos (ej: "datos/")
+            - columns: Lista de tuplas (nombre, tipo)
+                    Ej: [("id", "int"), ("nombre", "string")]
+        """
+        try:
+            print(f"\n[ATHENA] Creando tabla {table_name}...")
+            
+            # Construir definición de columnas
+            cols_def = ", ".join([f"{col} {tipo}" for col, tipo in columns])
+            
+            # SQL para crear tabla
+            sql = f"""
+                    CREATE EXTERNAL TABLE IF NOT EXISTS {database_name}.{table_name} (
+                        {cols_def}
+                    )
+                    ROW FORMAT DELIMITED
+                    FIELDS TERMINATED BY ','
+                    STORED AS TEXTFILE
+                    LOCATION 's3://{bucket_name}/{csv_path}'
+                    """
+            
+            print(f"SQL:\n{sql}")
+            
+            # Ejecutar query
+            response = self.athena_client.start_query_execution(
+                QueryString=sql,
+                QueryExecutionContext={'Database': database_name},
+                ResultConfiguration={'OutputLocation': f's3://{bucket_name}/athena-results/'}
+            )
+            
+            query_id = response['QueryExecutionId']
+            print(f"✓ Tabla creada con QueryID: {query_id}")
+            
+            return query_id
+        
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return None
+
+    def ejecutar_query_athena(self, database_name, sql, bucket_name):
+        """
+        EJECUTAR QUERY EN ATHENA
+        
+        Parámetros:
+            - database_name: Base de datos
+            - sql: Consulta SQL
+            - bucket_name: Bucket para resultados
+        """
+        try:
+            print(f"\n[ATHENA] Ejecutando query...")
+            print(f"SQL: {sql}\n")
+            
+            response = self.athena_client.start_query_execution(
+                QueryString=sql,
+                QueryExecutionContext={'Database': database_name},
+                ResultConfiguration={'OutputLocation': f's3://{bucket_name}/athena-results/'}
+            )
+            
+            query_id = response['QueryExecutionId']
+            print(f"✓ Query ejecutado. ID: {query_id}")
+            
+            # Esperar a que termine
+            import time
+            max_attempts = 30
+            for i in range(max_attempts):
+                response = self.athena_client.get_query_execution(QueryExecutionId=query_id)
+                status = response['QueryExecution']['Status']['State']
+                
+                if status == 'SUCCEEDED':
+                    print(f"✓ Query completado")
+                    break
+                elif status == 'FAILED':
+                    print(f"✗ Query falló: {response['QueryExecution']['Status']['StateChangeReason']}")
+                    return None
+                
+                time.sleep(1)
+            
+            # Obtener resultados
+            results = self.athena_client.get_query_results(QueryExecutionId=query_id)
+            
+            # Mostrar resultados
+            print(f"\n[RESULTADOS]")
+            for row in results['ResultSet']['Rows']:
+                valores = [col.get('VarCharValue', '') for col in row['Data']]
+                print(f"  {valores}")
+            
+            return results
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return None
+
+    def crear_tabla_athena_json(self, database_name, table_name, bucket_name, 
+                            json_path, columns):
+        """
+        CREAR TABLA ATHENA DESDE JSON EN S3
+        """
+        try:
+            print(f"\n[ATHENA] Creando tabla JSON {table_name}...")
+            
+            cols_def = ", ".join([f"{col} {tipo}" for col, tipo in columns])
+            
+            sql = f"""
+            CREATE EXTERNAL TABLE IF NOT EXISTS {database_name}.{table_name} (
+                {cols_def}
+            )
+            ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe'
+            STORED AS TEXTFILE
+            LOCATION 's3://{bucket_name}/{json_path}'
+            """
+            
+            print(f"SQL:\n{sql}")
+            
+            response = self.athena_client.start_query_execution(
+                QueryString=sql,
+                QueryExecutionContext={'Database': database_name},
+                ResultConfiguration={'OutputLocation': f's3://{bucket_name}/athena-results/'}
+            )
+            
+            query_id = response['QueryExecutionId']
+            print(f"✓ Tabla JSON creada: {query_id}")
+            return query_id
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return None
+        
+    def crear_tabla_particionada_athena(self, database_name, table_name, 
+                                    bucket_name, columns):
+        """
+        CREAR TABLA PARTICIONADA EN ATHENA
+        
+        Las particiones aceleran las queries filtrando por columna
+        """
+        try:
+            print(f"\n[ATHENA] Creando tabla particionada {table_name}...")
+            
+            cols_def = ", ".join([f"{col} {tipo}" for col, tipo in columns[:-1]])
+            partition_col, partition_type = columns[-1]
+            
+            sql = f"""
+            CREATE EXTERNAL TABLE IF NOT EXISTS {database_name}.{table_name} (
+                {cols_def}
+            )
+            PARTITIONED BY (
+                {partition_col} {partition_type}
+            )
+            ROW FORMAT DELIMITED
+            FIELDS TERMINATED BY ','
+            STORED AS TEXTFILE
+            LOCATION 's3://{bucket_name}/datos_particionados/'
+            """
+            
+            print(f"SQL:\n{sql}")
+            
+            response = self.athena_client.start_query_execution(
+                QueryString=sql,
+                QueryExecutionContext={'Database': database_name},
+                ResultConfiguration={'OutputLocation': f's3://{bucket_name}/athena-results/'}
+            )
+            
+            print(f"✓ Tabla particionada creada")
+            return response['QueryExecutionId']
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return None
+
+    def agregar_particion_athena(self, database_name, table_name, 
+                                partition_value, bucket_name, path):
+        """
+        AGREGAR PARTICIÓN A TABLA
+        """
+        try:
+            print(f"\n[ATHENA] Agregando partición...")
+            
+            sql = f"""
+            ALTER TABLE {database_name}.{table_name}
+            ADD IF NOT EXISTS PARTITION (year='{partition_value}')
+            LOCATION 's3://{bucket_name}/{path}'
+            """
+            
+            response = self.athena_client.start_query_execution(
+                QueryString=sql,
+                QueryExecutionContext={'Database': database_name},
+                ResultConfiguration={'OutputLocation': f's3://{bucket_name}/athena-results/'}
+            )
+            
+            print(f"✓ Partición agregada")
+            return response['QueryExecutionId']
+            
+        except Exception as e:
+            print(f"✗ Error: {str(e)}")
+            return None
+    
     # ==================== VPC/NETWORK MANAGEMENT ====================
 
     def obtener_vpc_predeterminada(self):
@@ -762,11 +1051,12 @@ class StorageManager:
     def crear_ec2(
         self,
         instance_name,
+        subnet_id,
         ami_id="ami-0ecb62995f68bb549",
         instance_type="t2.micro",
         security_group_name="sg-076af812ec93aff17",
         key_name="clave_casa",
-        user_data=None,
+        user_data=None
     ):
         """
         CREAR INSTANCIA EC2
@@ -794,6 +1084,7 @@ class StorageManager:
                 "MaxCount": 1,  # OBLIGATORIO: Máximo de instancias
                 "InstanceType": instance_type,  # OBLIGATORIO: Tipo de máquina
                 "SecurityGroupIds": security_group_name,  # OPCIONAL
+                "SubnetId":subnet_id,
                 "KeyName": key_name,  # OPCIONAL
             }
 
@@ -919,7 +1210,7 @@ class StorageManager:
     # Caso de uso: Discos duros virtuales para bases de datos, archivos críticos
 
     def crear_ebs(
-        self, volume_name, size=20, availability_zone="us-east-1c", volume_type="gp3"
+        self, volume_name, size=20, availability_zone=None, volume_type="gp3"
     ):
         """
         CREAR VOLUMEN EBS (Elastic Block Store)
@@ -1214,7 +1505,6 @@ df -h {mount_point}
             print(f"✗ Error al listar EFS: {str(e)}")
             return []
 
-
 # ==================== PROGRAMA Security_Group_SUBNET_KeyPair ====================
 
 def main_security_group_subnet_keypairs():
@@ -1307,6 +1597,7 @@ def main_ec2_efs_ebs():
         instance_name="mi-servidor-web",
         ami_id="ami-0ecb62995f68bb549",
         instance_type="t2.micro",
+        subnet_id=ConfigManager.obtener("subnet_id"),
         key_name=key_name,
         security_group_name=sg_id,
         user_data=user_data,
@@ -1409,7 +1700,6 @@ def main_ec2_efs_ebs():
             manager.listar_efs()
 
     print("\n✓ EC2, EBS y EFS guardados en aws_config.json")
-
 
 # ==================== PROGRAMA S3_STANDARD ====================
 
@@ -2022,7 +2312,6 @@ Junio,25600.00,12000.00,13600.00,0.531"""
     print(f"  Región: us-east-1")
     print(f"  Objetos creados: {len(todos_los_objetos)}")
 
-
 # ==================== PROGRAMA S3_GLACIER ====================    
 
 def main_s3_GLACIER():
@@ -2227,8 +2516,6 @@ Junio,25600.00,12000.00,13600.00,0.531"""
     print(f"  Nombre: {bucket_name}")
     print(f"  Región: us-east-1")
     print(f"  Objetos creados: {len(todos_los_objetos)}")
-
-     
 
 # ==================== PROGRAMA S3_DEEP_ARCHIVE ====================    
 
@@ -2435,7 +2722,263 @@ Junio,25600.00,12000.00,13600.00,0.531"""
     print(f"  Región: us-east-1")
     print(f"  Objetos creados: {len(todos_los_objetos)}")
 
-   
+# ==================== PROGRAMA USO VERSIONADO ====================    
+
+def main_versionado_s3():
+    """Demostración de versionado S3"""
+    manager = StorageManager()
+
+    ConfigManager.cargar_config()
+    bucket_name = ConfigManager.obtener('s3_bucket')
+
+    # PASO 1: Habilitar versionado
+    print("\n>>> PASO 1: HABILITAR VERSIONADO <<<")
+    manager.habilitar_versionado_s3(bucket_name)
+    
+    # PASO 2: Subir versión 1
+    print("\n>>> PASO 2: SUBIR VERSIÓN 1 <<<")
+    csv_v1 = """id,nombre,edad
+                1,Juan,25
+                2,María,30"""
+    
+    manager.subir_contenido_s3(
+        bucket_name, csv_v1, "datos/personas.csv"
+    )
+    time.sleep(1)
+    
+    # PASO 3: Subir versión 2 (modificado)
+    print("\n>>> PASO 3: SUBIR VERSIÓN 2 (MODIFICADO) <<<")
+    csv_v2 = """id,nombre,edad,ciudad
+                1,Juan,26,Madrid
+                2,María,31,Barcelona
+                3,Carlos,28,Valencia"""
+    
+    manager.subir_contenido_s3(
+        bucket_name, csv_v2, "datos/personas.csv"
+    )
+    time.sleep(1)
+    
+    # PASO 4: Subir versión 3
+    print("\n>>> PASO 4: SUBIR VERSIÓN 3 <<<")
+    csv_v3 = """id,nombre,edad,ciudad,departamento
+                1,Juan,26,Madrid,IT
+                2,María,31,Barcelona,RH
+                3,Carlos,28,Valencia,Ventas
+                4,Ana,29,Sevilla,IT"""
+    
+    manager.subir_contenido_s3(
+        bucket_name, csv_v3, "datos/personas.csv"
+    )
+    
+    # PASO 5: Listar todas las versiones
+    print("\n>>> PASO 5: LISTAR TODAS LAS VERSIONES <<<")
+    versiones = manager.obtener_versiones_objeto(bucket_name, "datos/personas.csv")
+    
+    # PASO 6: Comparar versiones
+    print("\n>>> PASO 6: COMPARAR VERSIONES <<<")
+    if len(versiones) >= 2:
+        v1_id = versiones[-1]['VersionId']  # Primera versión
+        v2_id = versiones[0]['VersionId']   # Última versión
+        
+        print(f"\n[VERSIÓN 1] (más antigua)")
+        contenido_v1 = manager.obtener_version_especifica(bucket_name, "datos/personas.csv", v1_id)
+        if contenido_v1:
+            print(contenido_v1.decode('utf-8'))
+        
+        print(f"\n[VERSIÓN 2] (más reciente)")
+        contenido_v2 = manager.obtener_version_especifica(bucket_name, "datos/personas.csv", v2_id)
+        if contenido_v2:
+            print(contenido_v2.decode('utf-8'))
+
+# ==================== PROGRAMA ATHENA ====================   
+
+def main_athena_csv():
+    """Demo de Athena con CSV"""
+    manager = StorageManager()
+    
+    # Cargar info
+
+    ConfigManager.cargar_config()
+    bucket_name = ConfigManager.obtener('s3_bucket')
+
+    # PASO 1: Crear base de datos
+    print("\n>>> PASO 1: CREAR BASE DE DATOS <<<")
+    manager.athena_client.start_query_execution(
+        QueryString="CREATE DATABASE IF NOT EXISTS mi_db",
+        ResultConfiguration={'OutputLocation': f's3://{bucket_name}/athena-results/'}
+    )
+    time.sleep(2)
+    
+    # PASO 2: Crear tabla
+    print("\n>>> PASO 2: CREAR TABLA DESDE CSV <<<")
+    manager.crear_tabla_athena_csv(
+        database_name="mi_db",
+        table_name="personas",
+        bucket_name=bucket_name,
+        csv_path="datos/",
+        columns=[
+            ("id", "int"),
+            ("nombre", "string"),
+            ("edad", "int"),
+            ("ciudad", "string")
+        ]
+    )
+    time.sleep(2)
+    
+    # PASO 3: Query 1 - Seleccionar todo
+    print("\n>>> PASO 3: QUERY 1 - SELECCIONAR TODO <<<")
+    manager.ejecutar_query_athena(
+        database_name="mi_db",
+        sql="SELECT * FROM personas",
+        bucket_name=bucket_name
+    )
+    
+    # PASO 4: Query 2 - Contar por ciudad
+    print("\n>>> PASO 4: QUERY 2 - CONTAR POR CIUDAD <<<")
+    manager.ejecutar_query_athena(
+        database_name="mi_db",
+        sql="SELECT ciudad, COUNT(*) as cantidad FROM personas GROUP BY ciudad",
+        bucket_name=bucket_name
+    )
+    
+    # PASO 5: Query 3 - Promedio de edad
+    print("\n>>> PASO 5: QUERY 3 - PROMEDIO DE EDAD <<<")
+    manager.ejecutar_query_athena(
+        database_name="mi_db",
+        sql="SELECT ciudad, AVG(edad) as edad_promedio FROM personas GROUP BY ciudad",
+        bucket_name=bucket_name
+    )
+
+# ==================== PROGRAMA ATHENA_JSON ====================   
+
+def main_athena_json():
+    """Demo de Athena con JSON"""
+    manager = StorageManager()
+    
+    # Cargar info
+    ConfigManager.cargar_config()
+    bucket_name = ConfigManager.obtener('s3_bucket')
+
+    # PASO 1: Subir datos JSON
+    print("\n>>> PASO 1: SUBIR DATOS JSON <<<")
+    json_data = """{"id": 1, "nombre": "Juan", "salario": 3000}
+                {"id": 2, "nombre": "María", "salario": 3500}
+                {"id": 3, "nombre": "Carlos", "salario": 4000}"""
+    
+    manager.subir_contenido_s3(
+        bucket_name, json_data, "datos_json/empleados.json",
+        content_type="application/json"
+    )
+    time.sleep(2)
+    
+    # PASO 2: Crear tabla JSON
+    print("\n>>> PASO 2: CREAR TABLA JSON <<<")
+    manager.crear_tabla_athena_json(
+        database_name="mi_db",
+        table_name="empleados",
+        bucket_name=bucket_name,
+        json_path="datos_json/",
+        columns=[
+            ("id", "int"),
+            ("nombre", "string"),
+            ("salario", "double")
+        ]
+    )
+    time.sleep(2)
+    
+    # PASO 3: Query 1 - Todos los empleados
+    print("\n>>> PASO 3: QUERY 1 - TODOS LOS EMPLEADOS <<<")
+    manager.ejecutar_query_athena(
+        database_name="mi_db",
+        sql="SELECT * FROM empleados",
+        bucket_name=bucket_name
+    )
+    
+    # PASO 4: Query 2 - Salario promedio
+    print("\n>>> PASO 4: QUERY 2 - SALARIO PROMEDIO <<<")
+    manager.ejecutar_query_athena(
+        database_name="mi_db",
+        sql="SELECT AVG(salario) as salario_promedio FROM empleados",
+        bucket_name=bucket_name
+    )
+    
+    # PASO 5: Query 3 - Empleados con salario > 3500
+    print("\n>>> PASO 5: QUERY 3 - SALARIO MAYOR A 3500 <<<")
+    manager.ejecutar_query_athena(
+        database_name="mi_db",
+        sql="SELECT nombre, salario FROM empleados WHERE salario > 3500",
+        bucket_name=bucket_name
+    )
+
+# ==================== PROGRAMA ATHENA_PARTICION_TABLA ====================  
+
+def main_athena_tabla_particionada():
+    """Demo de tabla particionada"""
+    manager = StorageManager()
+    
+    # Cargar info
+    ConfigManager.cargar_config()
+    bucket_name = ConfigManager.obtener('s3_bucket')
+
+    # PASO 1: Crear datos para 2024
+    print("\n>>> PASO 1: SUBIR DATOS AÑO 2024 <<<")
+    datos_2024 = """1,Juan,25
+                 2,María,30"""
+    manager.subir_contenido_s3(
+        bucket_name, datos_2024, "datos_particionados/year=2024/datos.csv"
+    )
+    
+    # PASO 2: Crear datos para 2025
+    print("\n>>> PASO 2: SUBIR DATOS AÑO 2025 <<<")
+    datos_2025 = """3,Carlos,28
+                4,Ana,29"""
+    manager.subir_contenido_s3(
+        bucket_name, datos_2025, "datos_particionados/year=2025/datos.csv"
+    )
+    time.sleep(1)
+    
+    # PASO 3: Crear tabla particionada
+    print("\n>>> PASO 3: CREAR TABLA PARTICIONADA <<<")
+    manager.crear_tabla_particionada_athena(
+        database_name="mi_db",
+        table_name="ventas_por_anio",
+        bucket_name=bucket_name,
+        columns=[
+            ("id", "int"),
+            ("nombre", "string"),
+            ("valor", "int"),
+            ("year", "string")
+        ]
+    )
+    time.sleep(2)
+    
+    # PASO 4: Agregar particiones
+    print("\n>>> PASO 4: AGREGAR PARTICIONES <<<")
+    manager.agregar_particion_athena(
+        database_name="mi_db",
+        table_name="ventas_por_anio",
+        partition_value="2024",
+        bucket_name=bucket_name,
+        path="datos_particionados/year=2024"
+    )
+    time.sleep(1)
+    
+    manager.agregar_particion_athena(
+        database_name="mi_db",
+        table_name="ventas_por_anio",
+        partition_value="2025",
+        bucket_name=bucket_name,
+        path="datos_particionados/year=2025"
+    )
+    time.sleep(1)
+    
+    # PASO 5: Query con partición
+    print("\n>>> PASO 5: QUERY USANDO PARTICIÓN <<<")
+    manager.ejecutar_query_athena(
+        database_name="mi_db",
+        sql="SELECT * FROM ventas_por_anio WHERE year='2024'",
+        bucket_name=bucket_name
+    )
 
 # ==================== PROGRAMA PRINCIPAL ====================
 
@@ -2454,12 +2997,16 @@ def main_selector():
         print("5. S3_INTELLIGENT_TIERING")
         print("6. S3_GLACIER")
         print("7. S3_DEEP_ARCHIVE")
-        print("8. Ver configuración guardada (aws_config.json)")
-        print("9. Ejecutar todas las partes en orden")
-        print("10. Limpiar configuración")
+        print("8. Demostracion de versionado S3")
+        print("9. Consultas con Athena")
+        print("10. Athena con JSON")
+        print("11. Athena con tabla particionada")
+        print("12. Ver configuración guardada (aws_config.json)")
+        print("13. Ejecutar todas las partes en orden")
+        print("14. Limpiar configuración")
         print("0. Salir")
         
-        opcion = input("\nSelecciona una opción (0-6): ").strip()
+        opcion = input("\nSelecciona una opción (0-14): ").strip()
         
         if opcion == "1":
             main_security_group_subnet_keypairs()
@@ -2476,8 +3023,16 @@ def main_selector():
         elif opcion == "7":
             main_s3_DEEP_ARCHIVE()
         elif opcion == "8":
-            ConfigManager.mostrar()
+            main_versionado_s3()
         elif opcion == "9":
+            main_athena_csv()
+        elif opcion == "10":
+            main_athena_json()
+        elif opcion == "11":
+            main_athena_tabla_particionada()
+        elif opcion == "12":
+            ConfigManager.mostrar()
+        elif opcion == "13":
             print("\nEjecutando todas las partes en orden...\n")
             main_security_group_subnet_keypairs()
             print("\n" + "=" * 80)
@@ -2508,7 +3063,24 @@ def main_selector():
             main_s3_DEEP_ARCHIVE()
             print("\n" + "=" * 80)
             print("S3 DEEP ARCHIVE creado. Todas las partes completadas.")
-        elif opcion == "10":
+
+            main_versionado_s3()
+            print("\n" + "=" * 80)
+            print("Versionado completado con exito.")
+
+            main_athena_csv()
+            print("\n" + "=" * 80)
+            print("Consultas Athena completadas con exito.")
+
+            main_athena_json()
+            print("\n" + "=" * 80)
+            print("Uso de Athena con JSON completado con exito.")
+
+            main_athena_tabla_particionada()
+            print("\n" + "=" * 80)
+            print("Particionado de tabla con Athena completado con exito.")
+
+        elif opcion == "14":
             confirmacion = input("\n¿Estás seguro de que deseas limpiar la configuración? (s/n): ").strip().lower()
             if confirmacion == "s":
                 ConfigManager.limpiar()

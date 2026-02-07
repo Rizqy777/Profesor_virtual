@@ -1,0 +1,11 @@
+id,nombre,email,telefono,ciudad,activo
+101,Juan García,juan@example.com,555-0001,Madrid,true
+102,María López,maria@example.com,555-0002,Barcelona,true
+103,Carlos Rodríguez,carlos@example.com,555-0003,Valencia,false
+104,Ana Martínez,ana@example.com,555-0004,Sevilla,true
+105,Luis Fernández,luis@example.com,555-0005,Bilbao,true
+106,Elena Jiménez,elena@example.com,555-0006,Malaga,true
+107,David Pérez,david@example.com,555-0007,Murcia,false
+108,Sofia Gómez,sofia@example.com,555-0008,Palma,true
+109,Miguel Sánchez,miguel@example.com,555-0009,Las Palmas,true
+110,Isabel Ruiz,isabel@example.com,555-0010,Alicante,false

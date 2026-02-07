@@ -1,12 +1,12 @@
 {
     "vpc_id": null,
-    "sg_id": null,
-    "subnet_id": null,
-    "instance_id": null,
-    "efs_id": null,
-    "volume_id": null,
-    "key_pairs_name": null,
-    "availability_zone": null,
-    "mount_target_id": null,
-    "s3_bucket": "mi-bucket-datos-deep-archive1769271626"
+    "sg_id": "sg-0ba13312c99acbe9c",
+    "subnet_id": "subnet-0ef31646c7f9938fd",
+    "instance_id": "i-096f54f7cd03f6a81",
+    "efs_id": "fs-0cd8108ce4abd7123",
+    "volume_id": "vol-0b4cb0f53e186d766",
+    "key_pairs_name": "clave_casa",
+    "availability_zone": "us-east-1a",
+    "mount_target_id": "fsmt-0d847e76f548d5f6f",
+    "s3_bucket": "mi-bucket-datos-deep-archive1770483565"
 }
