@@ -57,5 +57,1201 @@
   {"text": "Nivel adecuado para el curso", "label": 2},
   {"text": "Comportamiento estándar dentro del aula", "label": 2},
   {"text": "Mejora ligera respecto al trimestre anterior", "label": 1},
-  {"text": "Descenso leve en su rendimiento", "label": 0}
+  {"text": "Descenso leve en su rendimiento", "label": 0},
+  {
+    "text": "Resuelve problemas de forma independiente",
+    "label": 1
+  },
+  {
+    "text": "Lidera proyectos grupales con seguridad",
+    "label": 1
+  },
+  {
+    "text": "Ejecuta tareas con precisión y calidad",
+    "label": 1
+  },
+  {
+    "text": "Ha fortalecido sus habilidades escritas",
+    "label": 1
+  },
+  {
+    "text": "Domina los temas tratados en clase",
+    "label": 1
+  },
+  {
+    "text": "Solicita ayuda cuando la necesita de manera apropiada",
+    "label": 1
+  },
+  {
+    "text": "Cumple con los estándares de excelencia",
+    "label": 1
+  },
+  {
+    "text": "Aporta ideas creativas durante discusiones",
+    "label": 1
+  },
+  {
+    "text": "Ha superado todas las metas del trimestre",
+    "label": 1
+  },
+  {
+    "text": "Demuestra pensamiento crítico en análisis",
+    "label": 1
+  },
+  {
+    "text": "Mantiene una actitud positiva frente a desafíos",
+    "label": 1
+  },
+  {
+    "text": "Ha consolidado sus conocimientos previos",
+    "label": 1
+  },
+  {
+    "text": "Colabora de manera efectiva en equipos",
+    "label": 1
+  },
+  {
+    "text": "Mejora continuamente su caligrafía y presentación",
+    "label": 1
+  },
+  {
+    "text": "Expresa sus ideas con claridad y coherencia",
+    "label": 1
+  },
+  {
+    "text": "Falta frecuentemente a clase",
+    "label": 0
+  },
+  {
+    "text": "Se rehúsa a trabajar en equipo",
+    "label": 0
+  },
+  {
+    "text": "Muesta una actitud retadora hacia la autoridad",
+    "label": 0
+  },
+  {
+    "text": "No entiende conceptos básicos",
+    "label": 0
+  },
+  {
+    "text": "Entrega trabajos incompletos o a medio hacer",
+    "label": 0
+  },
+  {
+    "text": "Causa conflictos con otros estudiantes",
+    "label": 0
+  },
+  {
+    "text": "No estudia ni prepara exámenes",
+    "label": 0
+  },
+  {
+    "text": "Presenta tareas copiadas o plagiadas",
+    "label": 0
+  },
+  {
+    "text": "Utiliza el tiempo de clase inadecuadamente",
+    "label": 0
+  },
+  {
+    "text": "Ignora las correcciones del docente",
+    "label": 0
+  },
+  {
+    "text": "Tiene dificultades para concentrarse",
+    "label": 0
+  },
+  {
+    "text": "Presenta un patrón de trabajo deficiente",
+    "label": 0
+  },
+  {
+    "text": "No sigue instrucciones claras",
+    "label": 0
+  },
+  {
+    "text": "Distrae a otros durante las actividades",
+    "label": 0
+  },
+  {
+    "text": "Ha mostrado retroceso en su aprendizaje",
+    "label": 0
+  },
+  {
+    "text": "Desempeño dentro de lo esperado",
+    "label": 2
+  },
+  {
+    "text": "Cubre los objetivos básicos de la asignatura",
+    "label": 2
+  },
+  {
+    "text": "Muestra un esfuerzo moderado consistente",
+    "label": 2
+  },
+  {
+    "text": "Calificaciones en el rango intermedio",
+    "label": 2
+  },
+  {
+    "text": "Asistencia cercana al promedio del grupo",
+    "label": 2
+  },
+  {
+    "text": "Presenta trabajo de calidad estándar",
+    "label": 2
+  },
+  {
+    "text": "Participa de forma ocasional en clase",
+    "label": 2
+  },
+  {
+    "text": "Maneja un ritmo de aprendizaje regular",
+    "label": 2
+  },
+  {
+    "text": "Comportamiento típico sin mayores incidentes",
+    "label": 2
+  },
+  {
+    "text": "Completa tareas sin particular entusiasmo",
+    "label": 2
+  },
+  {
+    "text": "Conocimientos alineados con el nivel del curso",
+    "label": 2
+  },
+  {
+    "text": "Contribuye moderadamente en actividades colaborativas",
+    "label": 2
+  },
+  {
+    "text": "Resultados consistentes sin fluctuaciones",
+    "label": 2
+  },
+  {
+    "text": "Presenta un progreso incremental predecible",
+    "label": 2
+  },
+  {
+    "text": "Cumple con estándares mínimos requeridos",
+    "label": 2
+  },
+  {
+    "text": "Ha alcanzado reconocimiento académico",
+    "label": 1
+  },
+  {
+    "text": "Presenta un desempeño excepcional en evaluaciones",
+    "label": 1
+  },
+  {
+    "text": "Muestra independencia en su aprendizaje",
+    "label": 1
+  },
+  {
+    "text": "Ha ganado confianza en sus capacidades",
+    "label": 1
+  },
+  {
+    "text": "Integra conocimientos de diferentes áreas",
+    "label": 1
+  },
+  {
+    "text": "No completa las actividades propuestas",
+    "label": 0
+  },
+  {
+    "text": "Muestra apatía hacia el contenido académico",
+    "label": 0
+  },
+  {
+    "text": "Calificaciones por debajo del mínimo aceptable",
+    "label": 0
+  },
+  {
+    "text": "Presenta resistencia a nuevos aprendizajes",
+    "label": 0
+  },
+  {
+    "text": "Su avance es lento y poco consistente",
+    "label": 2
+  },
+  {
+    "text": "Se mantiene dentro de los límites aceptables",
+    "label": 2
+  },
+  {
+    "text": "Progresa a un ritmo similar a sus compañeros",
+    "label": 2
+  },
+  {
+    "text": "Alcanza los requisitos necesarios del curso",
+    "label": 2
+  },
+  {
+    "text": "Trabaja con disposición aunque sin destacar",
+    "label": 2
+  },
+  {
+    "text": "Ha mejorado notoriamente en lengua",
+    "label": 1
+  },
+  {
+    "text": "Argumenta sus respuestas de manera fundamentada",
+    "label": 1
+  },
+  {
+    "text": "Aplica correctamente metodologías enseñadas",
+    "label": 1
+  },
+  {
+    "text": "Demuestra curiosidad intelectual en clase",
+    "label": 1
+  },
+  {
+    "text": "Ha reducido significativamente sus errores",
+    "label": 1
+  },
+  {
+    "text": "Manifiesta desinterés total en la materia",
+    "label": 0
+  },
+  {
+    "text": "Realiza acciones que interrumpen el aprendizaje",
+    "label": 0
+  },
+  {
+    "text": "Ha abandonado prácticas básicas de estudio",
+    "label": 0
+  },
+  {
+    "text": "Obtiene resultados inconsistentes e irregulares",
+    "label": 2
+  },
+  {
+    "text": "Su rendimiento varía sin patrón definido",
+    "label": 2
+  },
+  {
+    "text": "Alcanza objetivos secundarios solamente",
+    "label": 2
+  },
+  {
+    "text": "Muestra una trayectoria plana durante el período",
+    "label": 2
+  },
+  {
+    "text": "Mejora ostensible en su disciplina de trabajo",
+    "label": 1
+  },
+  {
+    "text": "Establece conexiones entre conceptos nuevos",
+    "label": 1
+  },
+  {
+    "text": "Realiza aportes de calidad en discusiones",
+    "label": 1
+  },
+  {
+    "text": "Supera expectativas en presentaciones",
+    "label": 1
+  },
+  {
+    "text": "Tiene problemas recurrentes de asistencia",
+    "label": 0
+  },
+  {
+    "text": "Sabotea su propio progreso académico",
+    "label": 0
+  },
+  {
+    "text": "Busca constantemente distracciones en clase",
+    "label": 0
+  },
+  {
+    "text": "Permanece estancado en su nivel actual",
+    "label": 2
+  },
+  {
+    "text": "Sigue un camino predecible sin variación",
+    "label": 2
+  },
+  {
+    "text": "Cumple las expectativas de forma ordinaria",
+    "label": 2
+  },
+  {
+    "text": "Se manifiesta en el promedio sin sobresalir",
+    "label": 2
+  },
+  {
+    "text": "Proyecta un futuro académico prometedor",
+    "label": 1
+  },
+  {
+    "text": "Asimila rápidamente nuevos contenidos",
+    "label": 1
+  },
+  {
+    "text": "Busca desafíos mayores en su aprendizaje",
+    "label": 1
+  },
+  {
+    "text": "Presenta trabajos pulidos y bien organizados",
+    "label": 1
+  },
+  {
+    "text": "Carece de herramientas básicas para la asignatura",
+    "label": 0
+  },
+  {
+    "text": "Evita confrontar sus dificultades académicas",
+    "label": 0
+  },
+  {
+    "text": "Tiene un historial preocupante de suspensiones",
+    "label": 0
+  },
+  {
+    "text": "Muestra capacidad limitada de concentración",
+    "label": 0
+  },
+  {
+    "text": "Mantiene una línea de desempeño equilibrada",
+    "label": 2
+  },
+  {
+    "text": "Logra los requisitos sin esfuerzo excepcional",
+    "label": 2
+  },
+  {
+    "text": "Se ubica confortablemente dentro del grupo",
+    "label": 2
+  },
+  {
+    "text": "Aporta lo necesario sin iniciativas extras",
+    "label": 2
+  },
+  {
+    "text": "Reconoce y corrige sus propios errores",
+    "label": 1
+  },
+  {
+    "text": "Ha desarrollado una voz académica personal",
+    "label": 1
+  },
+  {
+    "text": "Participa constructivamente en debates",
+    "label": 1
+  },
+  {
+    "text": "Muestra dedicación en actividades prácticas",
+    "label": 1
+  },
+  {
+    "text": "Falta motivación para cumplir tareas",
+    "label": 0
+  },
+  {
+    "text": "Presenta una actitud defensiva ante crítica",
+    "label": 0
+  },
+  {
+    "text": "Recurre a excusas en lugar de esforzarse",
+    "label": 0
+  },
+  {
+    "text": "Desempeño sin cambios significativos observables",
+    "label": 2
+  },
+  {
+    "text": "Responde adecuadamente a demandas estándar",
+    "label": 2
+  },
+  {
+    "text": "Participa en la clase sin iniciativas propias",
+    "label": 2
+  },
+  {
+    "text": "Mantiene un nivel de logro sostenible",
+    "label": 2
+  },
+  {
+    "text": "Demuestra una sólida comprensión de los fundamentos",
+    "label": 1
+  },
+  {
+    "text": "Ha optimizado sus técnicas de estudio",
+    "label": 1
+  },
+  {
+    "text": "Realiza presentaciones con seguridad y claridad",
+    "label": 1
+  },
+  {
+    "text": "Muestra versatilidad en la resolución de problemas",
+    "label": 1
+  },
+  {
+    "text": "Ha adquirido nuevas competencias significativas",
+    "label": 1
+  },
+  {
+    "text": "Transmite entusiasmo en sus intervenciones",
+    "label": 1
+  },
+  {
+    "text": "Alcanza consistentemente altas calificaciones",
+    "label": 1
+  },
+  {
+    "text": "Demuestra responsabilidad en cada actividad",
+    "label": 1
+  },
+  {
+    "text": "Ha mejorado sus habilidades de comunicación",
+    "label": 1
+  },
+  {
+    "text": "Integra feedback de manera constructiva",
+    "label": 1
+  },
+  {
+    "text": "Muestra disposición para ayudar a compañeros",
+    "label": 1
+  },
+  {
+    "text": "Ha expandido su pensamiento analítico",
+    "label": 1
+  },
+  {
+    "text": "Presenta soluciones innovadoras en proyectos",
+    "label": 1
+  },
+  {
+    "text": "Demuestra dominio avanzado del tema",
+    "label": 1
+  },
+  {
+    "text": "Ha consolidado su identidad como buen estudiante",
+    "label": 1
+  },
+  {
+    "text": "Incumple constantemente con plazos establecidos",
+    "label": 0
+  },
+  {
+    "text": "Presenta comportamiento desafiante en clase",
+    "label": 0
+  },
+  {
+    "text": "Carece de dedicación en su formación académica",
+    "label": 0
+  },
+  {
+    "text": "Realiza acciones que perjudican el ambiente de aprendizaje",
+    "label": 0
+  },
+  {
+    "text": "Obtiene calificaciones muy por debajo del promedio",
+    "label": 0
+  },
+  {
+    "text": "Muestra total desinterés en mejorar",
+    "label": 0
+  },
+  {
+    "text": "No prepara adecuadamente las evaluaciones",
+    "label": 0
+  },
+  {
+    "text": "Falta sin justificación de manera recurrente",
+    "label": 0
+  },
+  {
+    "text": "Presenta dificultades graves que no aborda",
+    "label": 0
+  },
+  {
+    "text": "Tiene actitud confrontacional con docentes",
+    "label": 0
+  },
+  {
+    "text": "Incumple normas básicas del aula",
+    "label": 0
+  },
+  {
+    "text": "Presenta un bajo nivel de responsabilidad",
+    "label": 0
+  },
+  {
+    "text": "Evita participar en actividades grupales",
+    "label": 0
+  },
+  {
+    "text": "Muestra desorden en la presentación de trabajos",
+    "label": 0
+  },
+  {
+    "text": "Ha mostrado regresión en sus aprendizajes",
+    "label": 0
+  },
+  {
+    "text": "Se ajusta al ritmo de trabajo establecido",
+    "label": 2
+  },
+  {
+    "text": "Cumple con los requerimientos del curso",
+    "label": 2
+  },
+  {
+    "text": "Mantiene un comportamiento apropiado",
+    "label": 2
+  },
+  {
+    "text": "Obtiene calificaciones dentro del rango esperado",
+    "label": 2
+  },
+  {
+    "text": "Asiste regularmente a las sesiones",
+    "label": 2
+  },
+  {
+    "text": "Participa de manera conveniente en grupo",
+    "label": 2
+  },
+  {
+    "text": "Sigue el programa académico sin desviaciones",
+    "label": 2
+  },
+  {
+    "text": "Realiza tareas con la calidad estándar",
+    "label": 2
+  },
+  {
+    "text": "Se desenvuelve adecuadamente en evaluaciones",
+    "label": 2
+  },
+  {
+    "text": "Mantiene relaciones cordiales con la clase",
+    "label": 2
+  },
+  {
+    "text": "Muestra un esfuerzo típico de su nivel",
+    "label": 2
+  },
+  {
+    "text": "Progresa según lo previsto en el planteamiento",
+    "label": 2
+  },
+  {
+    "text": "Contribuye ocasionalmente a discusiones",
+    "label": 2
+  },
+  {
+    "text": "Tiene un desempeño equilibrado en asignaturas",
+    "label": 2
+  },
+  {
+    "text": "Cumple mínimamente con las expectativas",
+    "label": 2
+  },
+  {
+    "text": "Ejemplifica un crecimiento tangible y evidente",
+    "label": 1
+  },
+  {
+    "text": "Desarrolla pensamiento reflexivo sobre contenidos",
+    "label": 1
+  },
+  {
+    "text": "Manifiesta madurez en su aproximación académica",
+    "label": 1
+  },
+  {
+    "text": "Establece metas propias y las persigue",
+    "label": 1
+  },
+  {
+    "text": "Expresa dominio profundo en sus evaluaciones",
+    "label": 1
+  },
+  {
+    "text": "Deteriora la dinámica del grupo constantemente",
+    "label": 0
+  },
+  {
+    "text": "Manifiesta problemas de conducta sin corrección",
+    "label": 0
+  },
+  {
+    "text": "No aporta valor en trabajos colaborativos",
+    "label": 0
+  },
+  {
+    "text": "Presenta incompetencia en tareas fundamentales",
+    "label": 0
+  },
+  {
+    "text": "Transitiona sin cambio notable en su desempeño",
+    "label": 2
+  },
+  {
+    "text": "Logra satisfacer metas básicas del período",
+    "label": 2
+  },
+  {
+    "text": "Avanza a ritmo comparable con el grupo",
+    "label": 2
+  },
+  {
+    "text": "Mantiene estabilidad sin mejoras visibles",
+    "label": 2
+  },
+  {
+    "text": "Experimenta un ascenso considerable en resultados",
+    "label": 1
+  },
+  {
+    "text": "Implementa estrategias de aprendizaje efectivas",
+    "label": 1
+  },
+  {
+    "text": "Logra superar obstáculos con determinación",
+    "label": 1
+  },
+  {
+    "text": "Adquiere autonomía en su proceso formativo",
+    "label": 1
+  },
+  {
+    "text": "Produce trabajos de excelente factura",
+    "label": 1
+  },
+  {
+    "text": "Cae en patrones de incumplimiento repetido",
+    "label": 0
+  },
+  {
+    "text": "Muestra aversion hacia el trabajo académico",
+    "label": 0
+  },
+  {
+    "text": "Presenta un comportamiento errático e impredecible",
+    "label": 0
+  },
+  {
+    "text": "Acumula déficits que no intenta resolver",
+    "label": 0
+  },
+  {
+    "text": "Goza de aceptación dentro de lo ordinario",
+    "label": 2
+  },
+  {
+    "text": "Mantiene un nivel satisfactorio sin excesos",
+    "label": 2
+  },
+  {
+    "text": "Responde de forma acorde a las demandas",
+    "label": 2
+  },
+  {
+    "text": "Preserva su situación académica sin variación",
+    "label": 2
+  },
+  {
+    "text": "Articula ideas con precisión en sus respuestas",
+    "label": 1
+  },
+  {
+    "text": "Cultiva habilidades de análisis crítico",
+    "label": 1
+  },
+  {
+    "text": "Demuestra consistencia en su dedicación",
+    "label": 1
+  },
+  {
+    "text": "Genera aportaciones valiosas en clase",
+    "label": 1
+  },
+  {
+    "text": "Aplica conocimientos en contextos variados",
+    "label": 1
+  },
+  {
+    "text": "Se desentiende de sus responsabilidades",
+    "label": 0
+  },
+  {
+    "text": "Exhibe conducta inapropiada sin consecuencias internas",
+    "label": 0
+  },
+  {
+    "text": "Falla en la ejecución de tareas básicas",
+    "label": 0
+  },
+  {
+    "text": "Rehúye el esfuerzo necesario para progresar",
+    "label": 0
+  },
+  {
+    "text": "Ocupa una posición estable en la clase",
+    "label": 2
+  },
+  {
+    "text": "Demuestra competencia dentro de lo esperado",
+    "label": 2
+  },
+  {
+    "text": "Se ubica en la normalidad del desempeño",
+    "label": 2
+  },
+  {
+    "text": "Aporta el esfuerzo requerido sin mayores iniciativas",
+    "label": 2
+  },
+  {
+    "text": "Exhibe trayectoria de mejora sostenida",
+    "label": 1
+  },
+  {
+    "text": "Fortalece sus debilidades de forma sistemática",
+    "label": 1
+  },
+  {
+    "text": "Desarrolla confianza en sus capacidades",
+    "label": 1
+  },
+  {
+    "text": "Contribuye significativamente en proyectos grupales",
+    "label": 1
+  },
+  {
+    "text": "Obtiene reconocimiento por su desempeño",
+    "label": 1
+  },
+  {
+    "text": "Genera conflicto en el ambiente de aprendizaje",
+    "label": 0
+  },
+  {
+    "text": "Tiene un patrón de negligencia académica",
+    "label": 0
+  },
+  {
+    "text": "Experimenta dificultades sin buscar apoyo",
+    "label": 0
+  },
+  {
+    "text": "Demuestra falta de compromiso persistente",
+    "label": 0
+  },
+  {
+    "text": "Mantiene una trayectoria homogénea predecible",
+    "label": 2
+  },
+  {
+    "text": "Satisface requisitos sin destacarse notoriamente",
+    "label": 2
+  },
+  {
+    "text": "Se comporta dentro de los parámetros aceptables",
+    "label": 2
+  },
+  {
+    "text": "Progresa de manera constante y metódica",
+    "label": 2
+  },
+  {
+    "text": "Sobresale en la resolución de ejercicios complejos",
+    "label": 1
+  },
+  {
+    "text": "Manifiesta una actitud proactiva hacia el aprendizaje",
+    "label": 1
+  },
+  {
+    "text": "Ha alcanzado un nivel de excelencia en la materia",
+    "label": 1
+  },
+  {
+    "text": "Contribuye con perspectivas valiosas en debates",
+    "label": 1
+  },
+  {
+    "text": "Demuestra una capacidad excepcional de retención",
+    "label": 1
+  },
+  {
+    "text": "Ha transformado su desempeño de forma radical",
+    "label": 1
+  },
+  {
+    "text": "Lidera con el ejemplo en su grupo de trabajo",
+    "label": 1
+  },
+  {
+    "text": "Posee una comprensión integral del tema",
+    "label": 1
+  },
+  {
+    "text": "Ha fortalecido significativamente su autoestima académica",
+    "label": 1
+  },
+  {
+    "text": "Ejecuta proyectos con precisión y creatividad",
+    "label": 1
+  },
+  {
+    "text": "Demuestra madurez en su actitud frente a adversidades",
+    "label": 1
+  },
+  {
+    "text": "Ha desarrollado hábitos de estudio muy productivos",
+    "label": 1
+  },
+  {
+    "text": "Participa con preguntas inteligentes en clase",
+    "label": 1
+  },
+  {
+    "text": "Muestra una dedicación inquebrantable al aprendizaje",
+    "label": 1
+  },
+  {
+    "text": "Ha logrado una transformación académica notable",
+    "label": 1
+  },
+  {
+    "text": "Falta recurrentemente sin aviso previo",
+    "label": 0
+  },
+  {
+    "text": "Se niega a colaborar en actividades grupales",
+    "label": 0
+  },
+  {
+    "text": "Presenta actitud de indiferencia hacia calificaciones",
+    "label": 0
+  },
+  {
+    "text": "Causa problemas disciplinarios constantemente",
+    "label": 0
+  },
+  {
+    "text": "No domina conceptos básicos fundamentales",
+    "label": 0
+  },
+  {
+    "text": "Muestra resistencia a cualquier tipo de corrección",
+    "label": 0
+  },
+  {
+    "text": "Realiza trabajos de forma incompleta deliberadamente",
+    "label": 0
+  },
+  {
+    "text": "Tiene un historial de comportamiento inaceptable",
+    "label": 0
+  },
+  {
+    "text": "Carece de interés en sus propios logros",
+    "label": 0
+  },
+  {
+    "text": "Muestra desprecio por las normas establecidas",
+    "label": 0
+  },
+  {
+    "text": "No asume responsabilidad de sus acciones",
+    "label": 0
+  },
+  {
+    "text": "Presenta trabajos copiados sin consecuencia aparente",
+    "label": 0
+  },
+  {
+    "text": "Tiene problemas graves de comportamiento sin resolver",
+    "label": 0
+  },
+  {
+    "text": "Abandona tareas a mitad del camino",
+    "label": 0
+  },
+  {
+    "text": "Muestra un retroceso alarmante en su formación",
+    "label": 0
+  },
+  {
+    "text": "Transita de manera regular sin sobresaltos",
+    "label": 2
+  },
+  {
+    "text": "Responde adecuadamente a las exigencias normales",
+    "label": 2
+  },
+  {
+    "text": "Se posiciona dentro del promedio sin problemas",
+    "label": 2
+  },
+  {
+    "text": "Cumple lo estipulado sin exceder expectativas",
+    "label": 2
+  },
+  {
+    "text": "Mantiene una asistencia dentro de los límites",
+    "label": 2
+  },
+  {
+    "text": "Demuestra un esfuerzo acorde a su nivel",
+    "label": 2
+  },
+  {
+    "text": "Sigue indicaciones sin necesidad de supervisión intensiva",
+    "label": 2
+  },
+  {
+    "text": "Obtiene resultados que satisfacen lo básico",
+    "label": 2
+  },
+  {
+    "text": "Muestra un comportamiento sin incidentes graves",
+    "label": 2
+  },
+  {
+    "text": "Avanza conforme al cronograma del curso",
+    "label": 2
+  },
+  {
+    "text": "Tiene una participación acorde a lo esperado",
+    "label": 2
+  },
+  {
+    "text": "Mantiene calificaciones en rango intermedio",
+    "label": 2
+  },
+  {
+    "text": "Trabaja sin requerir intervenciones especiales",
+    "label": 2
+  },
+  {
+    "text": "Presenta un perfil académico sin variaciones notables",
+    "label": 2
+  },
+  {
+    "text": "Funciona dentro de los parámetros establecidos",
+    "label": 2
+  },
+  {
+    "text": "Ha demostrado un crecimiento acelerado y consistente",
+    "label": 1
+  },
+  {
+    "text": "Presenta trabajos que reflejan profundo análisis",
+    "label": 1
+  },
+  {
+    "text": "Asimila conceptos abstractos sin dificultad",
+    "label": 1
+  },
+  {
+    "text": "Demuestra capacidad para trabajar de forma independiente",
+    "label": 1
+  },
+  {
+    "text": "Manifiesta una mentalidad de mejora continua",
+    "label": 1
+  },
+  {
+    "text": "Comete errores reiterados sin intentar corregirlos",
+    "label": 0
+  },
+  {
+    "text": "Tiene una actitud pasiva frente al aprendizaje",
+    "label": 0
+  },
+  {
+    "text": "Realiza evaluaciones con resultados insuficientes",
+    "label": 0
+  },
+  {
+    "text": "Presenta dificultades que se agudizan con el tiempo",
+    "label": 0
+  },
+  {
+    "text": "Goza de una posición cómoda en su desempeño",
+    "label": 2
+  },
+  {
+    "text": "Mantiene un nivel que cumple lo requerido",
+    "label": 2
+  },
+  {
+    "text": "Se sitúa en una zona segura sin riesgos",
+    "label": 2
+  },
+  {
+    "text": "Progresa sin necesidad de intervenciones adicionales",
+    "label": 2
+  },
+  {
+    "text": "Exhibe un cambio positivo en su trayectoria",
+    "label": 1
+  },
+  {
+    "text": "Aplica métodos efectivos en la solución de problemas",
+    "label": 1
+  },
+  {
+    "text": "Ha mejorado notablemente su puntualidad",
+    "label": 1
+  },
+  {
+    "text": "Demuestra compromiso verdadero con su educación",
+    "label": 1
+  },
+  {
+    "text": "Logra resultados excepcionales en pruebas",
+    "label": 1
+  },
+  {
+    "text": "Ignora avisos sobre su bajo desempeño",
+    "label": 0
+  },
+  {
+    "text": "Tiene una conducta que perturba el aprendizaje ajeno",
+    "label": 0
+  },
+  {
+    "text": "Falla continuamente en cumplimiento de deberes",
+    "label": 0
+  },
+  {
+    "text": "Muestra signos de desapego total hacia la escuela",
+    "label": 0
+  },
+  {
+    "text": "Oscila dentro de los márgenes aceptables",
+    "label": 2
+  },
+  {
+    "text": "Ejecuta trabajo que satisface lo mínimo",
+    "label": 2
+  },
+  {
+    "text": "Mantiene un nivel sostenible sin cambios",
+    "label": 2
+  },
+  {
+    "text": "Participa sin entusiasmo pero cumple",
+    "label": 2
+  },
+  {
+    "text": "Presenta una evolución positiva palpable",
+    "label": 1
+  },
+  {
+    "text": "Genera aportes originales en sus trabajos",
+    "label": 1
+  },
+  {
+    "text": "Demuestra una visión estratégica en sus estudios",
+    "label": 1
+  },
+  {
+    "text": "Ha ganado respeto por parte de sus pares",
+    "label": 1
+  },
+  {
+    "text": "Mejora constantemente sus métodos de trabajo",
+    "label": 1
+  },
+  {
+    "text": "Manifiesta una negligencia extrema en su quehacer",
+    "label": 0
+  },
+  {
+    "text": "Desafía autoridad de forma sistemática",
+    "label": 0
+  },
+  {
+    "text": "Presenta un descenso acelerado en rendimiento",
+    "label": 0
+  },
+  {
+    "text": "No muestra signos de voluntad de mejora",
+    "label": 0
+  },
+  {
+    "text": "Mantiene una regularidad confortable en su desempeño",
+    "label": 2
+  },
+  {
+    "text": "Logra objetivos sin necesidad de apoyo adicional",
+    "label": 2
+  },
+  {
+    "text": "Se comporta dentro de lo que se considera normal",
+    "label": 2
+  },
+  {
+    "text": "Avanza de manera predecible y segura",
+    "label": 2
+  },
+  {
+    "text": "Ha alcanzado un nivel de maestría en la disciplina",
+    "label": 1
+  },
+  {
+    "text": "Demuestra pensamiento divergente en soluciones",
+    "label": 1
+  },
+  {
+    "text": "Motiva a otros con su entusiasmo por aprender",
+    "label": 1
+  },
+  {
+    "text": "Ha superado todas las pruebas con calificaciones altas",
+    "label": 1
+  },
+  {
+    "text": "Presenta un compromiso inquebrantable con su formación",
+    "label": 1
+  },
+  {
+    "text": "Evade responsabilidades de forma constante",
+    "label": 0
+  },
+  {
+    "text": "Muestra una actitud de disconformidad permanente",
+    "label": 0
+  },
+  {
+    "text": "Realiza aportes negativos en el ambiente escolar",
+    "label": 0
+  },
+  {
+    "text": "Acumula deudas académicas sin resolver",
+    "label": 0
+  },
+  {
+    "text": "Desempeña su rol dentro de lo convencional",
+    "label": 2
+  },
+  {
+    "text": "Mantiene una trayectoria lineal sin altibajos",
+    "label": 2
+  },
+  {
+    "text": "Responde de forma adecuada a lo esperado",
+    "label": 2
+  },
+  {
+    "text": "Transita el período sin mayores complicaciones",
+    "label": 2
+  }
 ]
